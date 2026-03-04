@@ -3,7 +3,7 @@
                 font-family: Arial, sans-serif;
             }
             body{
-                background-image: url("images/backgound/3261436.jpg");
+                background-image: url("");
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
@@ -133,3 +133,4 @@
                     padding: 10px;
                 }
             }
+
