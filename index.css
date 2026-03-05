@@ -83,18 +83,14 @@
                 padding: 10px;
                 width: 70%;
                 border-radius: 20px;
-                background: none;
+                background-color: lightskyblue;
             }
             .butt:hover{
                 cursor: pointer;
-                transition: background-color 0.15ms;
-                background-color: lightskyblue;
-                
             }
             .butt a:hover{
                 transition: color 0.15ms;
                 color: white;
-               
             }
             
             footer{
@@ -133,5 +129,6 @@
                     padding: 10px;
                 }
             }
+
 
 
