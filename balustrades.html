@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Balustrades | Gambopat Engineering & Training Center</title>
+        <meta name="description" content="Custom welded balustrades fabricated by Gambopat Engineering & Training Center in Ashaiman, Ghana.">
+        <meta name="keywords" content="metal balustrades Ghana, welded stairs Ashaiman, fabrication Ghana">
+        <meta name="author" content="Gambopat Engineering & Training Center">
+        <meta name="robots" content="index, follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="favicon-32x32.png">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <div class="hed-f">
+                <div><img src="images/gambo logo.jpeg" alt="Gambo Logo"></div>
+                <div><span class="gg">GAMBOPAT ENGINEERING</span></div>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav" class="nav">
+                <a href="index.html">Home</a>
+                <a href="window.html">Windows</a>
+                <a href="staircase.html">Staircase</a>
+                <a href="security-door.html">Doors</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="">Photo Gallery</a>
+                <a href="https://wa.me/233557313743" target="_blank" class="cta">WhatsApp</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h2>Balustrade Designs</h2>
+            <p>Strong, modern and elegant railing and balustrade fabrication in Ghana</p>
+        </section>
+
+        <section class="gallery" id="gallery-container">
+            <p style="text-align:center; width:100%; color:inherit;">Loading premium balustrades...</p>
+        </section>
+
+        <div class="image-viewer" id="imageViewer">
+            <span class="close-btn" onclick="closeViewer()">×</span>
+            <img id="fullImage" alt="Expanded view">
+        </div>
+
+        <section class="cta-section">
+            <h2>Need a Custom Balustrade?</h2>
+            <p>Contact us today for professional fabrication</p>
+            <a href="https://wa.me/233557313743" target="_blank">Chat on WhatsApp</a>
+        </section>
+
+        <footer>
+            <p>© 2026 Gambopat Engineering & Training Center</p>
+        </footer>
+
+        <script>
+            function toggleMenu(){
+                const nav = document.getElementById("nav");
+                if (nav) nav.classList.toggle("show");
+            }
+
+            function applySavedTheme() {
+                if (localStorage.getItem('darkMode') === 'true') {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            }
+            document.addEventListener("DOMContentLoaded", applySavedTheme);
+        </script>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+            import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA",
+                authDomain: "gambopat-327be.firebaseapp.com",
+                projectId: "gambopat-327be",
+                storageBucket: "gambopat-327be.firebasestorage.app",
+                messagingSenderId: "334515883953",
+                appId: "1:334515883953:web:3cd35ada86b25770a53790",
+                measurementId: "G-Y9RG1NKHYF"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            const galleryContainer = document.getElementById('gallery-container');
+            window.zoomed = false;
+
+            // Listens to the 'balustrades' collection dynamically
+            onSnapshot(collection(db, "balustrades"), (snapshot) => {
+                if (!galleryContainer) return;
+                galleryContainer.innerHTML = "";
+                
+                if (snapshot.empty) {
+                    galleryContainer.innerHTML = "<p style='text-align:center; width:100%; color:inherit;'>No designs added yet.</p>";
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const safeName = data.name.replace(/'/g, "\\'");
+                    
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <img src="${data.imageUrl}" class="product-img" alt="${data.name}">
+                        <div class="info">
+                            <p>${data.name}</p>
+                            <button class="order-btn" data-name="${safeName}" data-url="${data.imageUrl}">
+                                Order on WhatsApp
+                            </button>
+                        </div>
+                    `;
+                    galleryContainer.appendChild(card);
+                });
+
+                setupImageViewer();
+                checkUrlParametersForZoom();
+            });
+
+            if (galleryContainer) {
+                galleryContainer.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('order-btn')) {
+                        const name = e.target.getAttribute('data-name');
+                        const url = e.target.getAttribute('data-url');
+                        orderWhatsApp(name, url);
+                    }
+                });
+            }
+
+            function orderWhatsApp(productName, imageUrl){
+                let phoneNumber = "233557313743";
+                let message = imageUrl 
+                    ? `I am interested in your product: ${productName}. Here is the image: ${imageUrl}`
+                    : `I am interested in your product: ${productName}`;
+                let whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappURL, "_blank");
+            }
+
+            function setupImageViewer() {
+                const productImages = document.querySelectorAll(".product-img");
+                const imageViewer = document.getElementById("imageViewer");
+                const fullImage = document.getElementById("fullImage");
+
+                if (!imageViewer || !fullImage) return;
+
+                productImages.forEach(img => {
+                    img.onclick = () => {
+                        imageViewer.style.display = "flex";
+                        fullImage.src = img.src;
+                        fullImage.style.transform = "scale(1)";
+                        window.zoomed = false;
+                    };
+                });
+
+                window.closeViewer = function() {
+                    imageViewer.style.display = "none";
+                }
+
+                fullImage.onclick = () => {
+                    if(!window.zoomed){
+                        fullImage.style.transform = "scale(2)";
+                        fullImage.style.cursor = "zoom-out";
+                        window.zoomed = true;
+                    } else {
+                        fullImage.style.transform = "scale(1)";
+                        fullImage.style.cursor = "zoom-in";
+                        window.zoomed = false;
+                    }
+                };
+            }
+
+            function checkUrlParametersForZoom() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const targetImgUrl = urlParams.get('img');
+                if (targetImgUrl) {
+                    const imageViewer = document.getElementById("imageViewer");
+                    const fullImage = document.getElementById("fullImage");
+                    if (imageViewer && fullImage) {
+                        imageViewer.style.display = "flex";
+                        fullImage.src = targetImgUrl;
+                        fullImage.style.transform = "scale(1)";
+                        window.zoomed = false;
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

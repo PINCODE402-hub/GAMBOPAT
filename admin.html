@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gambopat Admin Panel</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f4f4; padding: 20px; margin: 0; }
+        .container { max-width: 600px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #ffcc00; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        button:hover { background-color: #e6b800; }
+        .hidden { display: none; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #ddd; }
+        .delete-btn { width: auto; background-color: #ff4d4d; color: white; padding: 5px 10px; margin: 0; }
+        .delete-btn:hover { background-color: #cc0000; }
+    </style>
+</head>
+<body>
+
+    <div id="login-section" class="container">
+        <h2>Gambopat Admin Login</h2>
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="admin@gambopat.com">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••">
+        <button id="btn-login">Login</button>
+    </div>
+
+    <div id="admin-section" class="container hidden">
+        <h2>Gambopat Content Management</h2>
+        <p>Logged in as Admin | <a href="#" id="btn-logout">Logout</a> | <a href="index.html">View Website</a></p>
+        
+        <hr>
+
+        <h3>Add New Item</h3>
+        <label>Category Page</label>
+        <select id="item-category">
+            <option value="windows">Window Frames</option>
+            <option value="gates">Main Gates</option>
+            <option value="doors">Security Doors</option>
+            <option value="staircases">Staircases</option>
+            <option value="balustrades">Balustrades</option>
+            <option value="furniture">Chairs & Tables</option>
+        </select>
+
+        <label>Design/Item Name</label>
+        <input type="text" id="item-name" placeholder="e.g., Modern Arch Window Frame">
+
+        <label>Cloudinary Image URL</label>
+        <input type="url" id="item-url" placeholder="https://res.cloudinary.com/...">
+
+        <button id="btn-add">Upload to Gallery</button>
+
+        <hr style="margin-top:40px;">
+
+        <h3>Manage Current Items</h3>
+        <label>Select Category to View/Delete Items</label>
+        <select id="view-category">
+            <option value="windows">Window Frames</option>
+            <option value="gates">Main Gates</option>
+            <option value="doors">Security Doors</option>
+            <option value="staircases">Staircases</option>
+            <option value="balustrades">Balustrades</option>
+            <option value="furniture">Chairs & Tables</option>
+        </select>
+
+        <div id="items-list" style="margin-top:15px;"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA",
+            authDomain: "gambopat-327be.firebaseapp.com",
+            projectId: "gambopat-327be",
+            storageBucket: "gambopat-327be.firebasestorage.app",
+            messagingSenderId: "334515883953",
+            appId: "1:334515883953:web:3cd35ada86b25770a53790",
+            measurementId: "G-Y9RG1NKHYF"
+        };
+
+        // Initialize Firebase using compat syntax
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // UI Target references
+        const loginSection = document.getElementById('login-section');
+        const adminSection = document.getElementById('admin-section');
+        const itemsList = document.getElementById('items-list');
+        const viewCategorySelect = document.getElementById('view-category');
+
+        // Check if Admin user is signed in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loginSection.classList.add('hidden');
+                adminSection.classList.remove('hidden');
+                loadManageItems(viewCategorySelect.value);
+            } else {
+                loginSection.classList.remove('hidden');
+                adminSection.classList.add('hidden');
+            }
+        });
+
+        // Sign In Action
+        document.getElementById('btn-login').addEventListener('click', () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            auth.signInWithEmailAndPassword(email, password).catch(err => alert("Error: " + err.message));
+        });
+
+        // Sign Out Action
+        document.getElementById('btn-logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            auth.signOut();
+        });
+
+        // Add Item Data to Firestore Collection
+        document.getElementById('btn-add').addEventListener('click', async () => {
+            const category = document.getElementById('item-category').value;
+            const name = document.getElementById('item-name').value;
+            const imageUrl = document.getElementById('item-url').value;
+
+            if(!name || !imageUrl) {
+                alert("Please fill out all fields!");
+                return;
+            }
+
+            try {
+                await db.collection(category).add({ name, imageUrl, createdAt: Date.now() });
+                alert("Item added successfully!");
+                document.getElementById('item-name').value = "";
+                document.getElementById('item-url').value = "";
+            } catch (error) {
+                alert("Write failed: " + error.message);
+            }
+        });
+
+        // Display current live items with a Delete button
+        let unsubscribeLiveList;
+        function loadManageItems(category) {
+            if(unsubscribeLiveList) unsubscribeLiveList(); // Clean old listener
+            
+            unsubscribeLiveList = db.collection(category).onSnapshot((snapshot) => {
+                itemsList.innerHTML = "";
+                snapshot.forEach((documentItem) => {
+                    const itemData = documentItem.data();
+                    const row = document.createElement('div');
+                    row.className = 'item-row';
+                    row.innerHTML = `
+                        <span><strong>${itemData.name}</strong></span>
+                        <button class="delete-btn" data-id="${documentItem.id}">Delete</button>
+                    `;
+                    itemsList.appendChild(row);
+                });
+            });
+        }
+
+        // Watch Category selection changes to switch views
+        viewCategorySelect.addEventListener('change', (e) => loadManageItems(e.target.value));
+
+        // Handle item deletion clicks
+        itemsList.addEventListener('click', async (e) => {
+            if(e.target.classList.contains('delete-btn')) {
+                const itemId = e.target.getAttribute('data-id');
+                const category = viewCategorySelect.value;
+                if(confirm("Are you sure you want to delete this design?")) {
+                    await db.collection(category).doc(itemId).delete();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
