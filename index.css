@@ -125,7 +125,7 @@
                 animation-name: text-animation;
                 animation-iteration-count: 1;
                 animation-timing-function: ease;
-                animation-duration: 3s;
+                animation-duration: 1s;
             }
             @keyframes text-animation{
                 from{
@@ -157,7 +157,7 @@
                 animation-name: text-animation2;
                 animation-iteration-count: 1;
                 animation-timing-function: ease;
-                animation-duration: 3s;
+                animation-duration: 1s;
             }
             .info-div{
                 padding: 20px;
