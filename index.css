@@ -440,7 +440,20 @@
                 .nav.show {
                     display: flex;
                 }
+                body.light-theme .nav a{
+                    color: #333333;
+                }
                 
+            }
+            @media (min-width: 768px) and (max-width: 999px) {
+                body.light-theme .nav a{
+                    color: #333333;
+                }
+            }
+            @media (min-width: 999px) {
+                body.light-theme .nav a{
+                    color: #333333;
+                }
             }
             /* --- LIGHT THEME OVERRIDES FOR INDEX --- */
             body.light-theme {
@@ -458,9 +471,6 @@
             }
             body.light-theme .menu-btn{
                 color: #333333 !important;
-            }
-            body.light-theme .nav a{
-                color: white;
             }
             body.light-theme .nav a:hover {
                 color: #ff9900 !important;
