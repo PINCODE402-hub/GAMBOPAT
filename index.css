@@ -442,41 +442,6 @@
                 }
                 
             }
-            /* LIGHT THEME FOR MAIN LANDING PAGE (index.html) */
-            body.light-theme {
-                background: #f8fafc;
-                color: #1e293b;
-            }
-
-            body.light-theme section {
-                background-image: linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url('images/cutting-metal-with-plasma-equipment.jpg');
-                background-color: #f1f5f9;
-            }
-
-            body.light-theme section p,  
-            body.light-theme .p1,
-            body.light-theme section h2 {
-                color: #1e293b !important;
-            }
-
-            body.light-theme section h2 {
-                background-color: #e2e8f0;
-                border-color: #cbd5e1;
-            }
-
-            body.light-theme .info-div, 
-            body.light-theme .button-section, 
-            body.light-theme .about-us-div, 
-            body.light-theme .motto-div, 
-            body.light-theme .need-div {
-                background-color: rgba(255, 255, 255, 0.85);
-                border: 1px solid rgba(0, 0, 0, 0.05);
-            }
-
-            body.light-theme .button1 {
-                background-color: #0ea5e9;
-                color: white;
-            }
             /* --- LIGHT THEME OVERRIDES FOR INDEX --- */
             body.light-theme {
                 background-color: #f4f6f9 !important;
@@ -488,10 +453,15 @@
                 border-bottom: 1px solid #dddddd;
             }
 
-            body.light-theme .nav a, body.light-theme .gg{
+            body.light-theme .gg{
                 color: #333333 !important;
             }
-
+            body.light-theme .menu-btn{
+                color: #333333 !important;
+            }
+            body.light-theme .nav a{
+                color: white;
+            }
             body.light-theme .nav a:hover {
                 color: #ff9900 !important;
             }
