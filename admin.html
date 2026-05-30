@@ -9,13 +9,19 @@
         .container { max-width: 600px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         h2 { color: #333; margin-bottom: 20px; }
         label { display: block; margin-top: 15px; font-weight: bold; }
-        input, select, button { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background-color: #ffcc00; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        input[type="text"], input[type="url"], input[type="email"], input[type="password"], input[type="file"], select, button { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #ffcc00; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
         button:hover { background-color: #e6b800; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
         .hidden { display: none; }
         .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #ddd; }
         .delete-btn { width: auto; background-color: #ff4d4d; color: white; padding: 5px 10px; margin: 0; }
         .delete-btn:hover { background-color: #cc0000; }
+        
+        /* Toggle Styles */
+        .source-toggle { display: flex; gap: 15px; margin-top: 5px; }
+        .source-toggle label { display: flex; align-items: center; gap: 5px; font-weight: normal; margin-top: 0; cursor: pointer; }
+        .source-toggle input { width: auto; margin: 0; }
     </style>
 </head>
 <body>
@@ -49,10 +55,23 @@
         <label>Design/Item Name</label>
         <input type="text" id="item-name" placeholder="e.g., Modern Arch Window Frame">
 
-        <label>Cloudinary Image URL</label>
-        <input type="url" id="item-url" placeholder="https://res.cloudinary.com/...">
+        <label>Image Source</label>
+        <div class="source-toggle">
+            <label><input type="radio" name="image-source" value="upload" checked> Upload File</label>
+            <label><input type="radio" name="image-source" value="url"> Paste URL</label>
+        </div>
 
-        <button id="btn-add">Upload to Gallery</button>
+        <div id="upload-section">
+            <label>Select Image File</label>
+            <input type="file" id="item-image" accept="image/*">
+        </div>
+
+        <div id="url-section" class="hidden">
+            <label>Image URL</label>
+            <input type="url" id="item-url" placeholder="https://res.cloudinary.com/... or https://...">
+        </div>
+
+        <button id="btn-add">Add to Gallery</button>
 
         <hr style="margin-top:40px;">
 
@@ -75,7 +94,13 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // Your web app's Firebase configuration
+        // --- 1. CLOUDINARY CONFIGURATION ---
+        const CLOUDINARY_CLOUD_NAME = "dwj32uz3y"; 
+        const CLOUDINARY_UPLOAD_PRESET = "Gambopat-preset"; 
+        const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+
+        // --- 2. FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA",
             authDomain: "gambopat-327be.firebaseapp.com",
@@ -86,7 +111,6 @@
             measurementId: "G-Y9RG1NKHYF"
         };
 
-        // Initialize Firebase using compat syntax
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -96,8 +120,26 @@
         const adminSection = document.getElementById('admin-section');
         const itemsList = document.getElementById('items-list');
         const viewCategorySelect = document.getElementById('view-category');
+        
+        // Input toggles
+        const uploadSection = document.getElementById('upload-section');
+        const urlSection = document.getElementById('url-section');
+        const radioButtons = document.querySelectorAll('input[name="image-source"]');
 
-        // Check if Admin user is signed in
+        // Toggle UI logic
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if(e.target.value === 'upload') {
+                    uploadSection.classList.remove('hidden');
+                    urlSection.classList.add('hidden');
+                } else {
+                    uploadSection.classList.add('hidden');
+                    urlSection.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Auth Logic
         auth.onAuthStateChanged((user) => {
             if (user) {
                 loginSection.classList.add('hidden');
@@ -109,44 +151,98 @@
             }
         });
 
-        // Sign In Action
         document.getElementById('btn-login').addEventListener('click', () => {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             auth.signInWithEmailAndPassword(email, password).catch(err => alert("Error: " + err.message));
         });
 
-        // Sign Out Action
         document.getElementById('btn-logout').addEventListener('click', (e) => {
             e.preventDefault();
             auth.signOut();
         });
 
-        // Add Item Data to Firestore Collection
+        // --- 3. ADD ITEM LOGIC (HYBRID) ---
         document.getElementById('btn-add').addEventListener('click', async () => {
             const category = document.getElementById('item-category').value;
             const name = document.getElementById('item-name').value;
-            const imageUrl = document.getElementById('item-url').value;
+            const sourceMode = document.querySelector('input[name="image-source"]:checked').value;
+            const btnAdd = document.getElementById('btn-add');
+            
+            let finalImageUrl = "";
 
-            if(!name || !imageUrl) {
-                alert("Please fill out all fields!");
+            if(!name) {
+                alert("Please enter a name for the design!");
                 return;
             }
 
             try {
-                await db.collection(category).add({ name, imageUrl, createdAt: Date.now() });
+                btnAdd.disabled = true;
+
+                if (sourceMode === "upload") {
+                    // Process Cloudinary Upload
+                    const imageFileInput = document.getElementById('item-image');
+                    
+                    if(imageFileInput.files.length === 0) {
+                        alert("Please select an image file to upload!");
+                        btnAdd.disabled = false;
+                        return;
+                    }
+
+                    btnAdd.innerText = "Uploading to Cloudinary...";
+                    const file = imageFileInput.files[0];
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+                    const cloudinaryResponse = await fetch(CLOUDINARY_UPLOAD_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const cloudinaryData = await cloudinaryResponse.json();
+
+                    if (!cloudinaryResponse.ok) {
+                        throw new Error(cloudinaryData.error?.message || "Failed to upload image.");
+                    }
+
+                    finalImageUrl = cloudinaryData.secure_url;
+
+                } else {
+                    // Process URL Input
+                    finalImageUrl = document.getElementById('item-url').value;
+                    
+                    if(!finalImageUrl) {
+                        alert("Please paste an image URL!");
+                        btnAdd.disabled = false;
+                        return;
+                    }
+                }
+
+                // Save to Firestore
+                btnAdd.innerText = "Saving to Database...";
+                await db.collection(category).add({ name, imageUrl: finalImageUrl, createdAt: Date.now() });
+                
                 alert("Item added successfully!");
+                
+                // Clear the form
                 document.getElementById('item-name').value = "";
+                document.getElementById('item-image').value = "";
                 document.getElementById('item-url').value = "";
+
             } catch (error) {
-                alert("Write failed: " + error.message);
+                console.error("Submission Error:", error);
+                alert("An error occurred: " + error.message);
+            } finally {
+                btnAdd.innerText = "Add to Gallery";
+                btnAdd.disabled = false;
             }
         });
 
         // Display current live items with a Delete button
         let unsubscribeLiveList;
         function loadManageItems(category) {
-            if(unsubscribeLiveList) unsubscribeLiveList(); // Clean old listener
+            if(unsubscribeLiveList) unsubscribeLiveList(); 
             
             unsubscribeLiveList = db.collection(category).onSnapshot((snapshot) => {
                 itemsList.innerHTML = "";
@@ -163,10 +259,8 @@
             });
         }
 
-        // Watch Category selection changes to switch views
         viewCategorySelect.addEventListener('change', (e) => loadManageItems(e.target.value));
 
-        // Handle item deletion clicks
         itemsList.addEventListener('click', async (e) => {
             if(e.target.classList.contains('delete-btn')) {
                 const itemId = e.target.getAttribute('data-id');
