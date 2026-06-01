@@ -9,15 +9,19 @@
         <meta name="robots" content="index, follow">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-        <!-- Open Graph Meta Tags -->
         <meta property="og:title" content="Gambopat Engineering & Training Center | Welding & Fabrication in Ashaiman">
         <meta property="og:description" content="Gambopat Engineering & Training Center offers professional welding, fabrication, gates, doors, windows and apprenticeship training in Ashaiman, Zenu, Peaceland, Ghana.">
         <meta property="og:url" content="https://pincode402-hub.github.io/GAMBOPAT/">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Gambopat Engineering & Training Center">
-        <meta property="og:image" content="https://pincode402-hub.github.io/GAMBOPAT/images/favicon-96x96.png">
+        
+        <meta property="og:image" content="https://pincode402-hub.github.io/GAMBOPAT/web-app-manifest-512x512.png">
+        <meta property="og:image:width" content="512">
+        <meta property="og:image:height" content="512">
+        <meta property="og:image:type" content="image/png">
+
         <link rel="icon" href="favicon.ico" sizes="any">
-        <link rel="icon" href="favicon.ico" type="image/svg+xml">
+        <link rel="icon" href="favicon.svg" type="image/svg+xml">
         <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
         
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -125,16 +129,12 @@
                 menu.classList.toggle('active');
             }
 
-            // This single function matches the 'onchange="toggleLightMode()"' rule on your checkbox element!
             function toggleLightMode() {
                 document.body.classList.toggle('light-theme');
-                
-                // Save the setting using 'lightTheme' so that your sub-pages read it too
                 const isLight = document.body.classList.contains('light-theme');
                 localStorage.setItem('lightTheme', isLight);
             }
 
-            // Check for the correct lightTheme value when the page loads
             window.addEventListener("DOMContentLoaded", () => {
                 if (localStorage.getItem('lightTheme') === 'true') {
                     document.body.classList.add('light-theme');
@@ -169,7 +169,6 @@
 
             async function buildSlideshow() {
                 try {
-                    // Targets list updated to look across all 5 standard project types
                     const targets = [
                         { id: 'doors', url: 'security-door.html', label: 'Security Doors' },
                         { id: 'staircases', url: 'staircase.html', label: 'Staircases' },
