@@ -9,23 +9,21 @@
         <meta name="robots" content="index, follow">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
+        <!-- Open Graph Meta Tags -->
         <meta property="og:title" content="Gambopat Engineering & Training Center | Welding & Fabrication in Ashaiman">
         <meta property="og:description" content="Gambopat Engineering & Training Center offers professional welding, fabrication, gates, doors, windows and apprenticeship training in Ashaiman, Zenu, Peaceland, Ghana.">
         <meta property="og:url" content="https://pincode402-hub.github.io/GAMBOPAT/">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Gambopat Engineering & Training Center">
-        
-        <meta property="og:image" content="https://pincode402-hub.github.io/GAMBOPAT/web-app-manifest-512x512.png">
-        <meta property="og:image:width" content="512">
-        <meta property="og:image:height" content="512">
-        <meta property="og:image:type" content="image/png">
-
+        <meta property="og:image" content="https://pincode402-hub.github.io/GAMBOPAT/images/gambologo.jpeg">
         <link rel="icon" href="favicon.ico" sizes="any">
         <link rel="icon" href="favicon.svg" type="image/svg+xml">
         <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
         
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="manifest" href="site.webmanifest">
         <link rel="stylesheet" href="index.css">
     </head>
@@ -33,7 +31,7 @@
         <div class="bg"></div>
         <header>
             <div class="hed-f">
-                <div><img src="favicon-96x96.png" alt="Logo"></div>
+                <div><img src="images/gambo logo.jpeg" alt="Logo"></div>
                 <div><span class="gg">GAMBOPAT ENGINEERING</span></div>
             </div>
         
@@ -47,7 +45,7 @@
                 <a href="chairs-tables.html">Furniture</a>
                 <a href="">Photo Gallery</a>
                 <a href="admin.html" style="color: #ffcc00; font-weight: bold;">Admin Panel</a> 
-                <a href="https://wa.me/233557313743" class="cta">WhatsApp</a>
+                <a href="https://wa.me/233243265708" class="cta">WhatsApp</a>
             </nav>
             <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
             <div class="settings-menu" id="settingsMenu">
@@ -106,11 +104,11 @@
             </div>
             
             <div class="contacts">
-                <a href="https://wa.me/233557313743" title="whatsapp">
-                    <img src="https://res.cloudinary.com/dwj32uz3y/image/upload/v1779080441/icons8-whatsapp-logo-48_uxdpts.svg" alt="whatsapp">
+                <a href="https://wa.me/233243265708?text=I%20am%20interested%20in%20your%20product" title="whatsapp">
+                    <img src="images/icons8-whatsapp-logo-48.svg" alt="whatsapp">
                 </a>
-                <a title="Make a call." href="tel:+233557313743">
-                    <img src="https://res.cloudinary.com/dwj32uz3y/image/upload/v1779080440/icons8-phone-48_ywlhuf.svg" alt="phone">
+                <a title="Make a call." href="tel:+2330557313743">
+                    <img src="images/icons8-phone-48.svg" alt="phone">
                 </a>
             </div>
         </section>
@@ -129,12 +127,16 @@
                 menu.classList.toggle('active');
             }
 
+            // This single function matches the 'onchange="toggleLightMode()"' rule on your checkbox element!
             function toggleLightMode() {
                 document.body.classList.toggle('light-theme');
+                
+                // Save the setting using 'lightTheme' so that your sub-pages read it too
                 const isLight = document.body.classList.contains('light-theme');
                 localStorage.setItem('lightTheme', isLight);
             }
 
+            // Check for the correct lightTheme value when the page loads
             window.addEventListener("DOMContentLoaded", () => {
                 if (localStorage.getItem('lightTheme') === 'true') {
                     document.body.classList.add('light-theme');
@@ -169,6 +171,7 @@
 
             async function buildSlideshow() {
                 try {
+                    // Targets list updated to look across all 5 standard project types
                     const targets = [
                         { id: 'doors', url: 'security-door.html', label: 'Security Doors' },
                         { id: 'staircases', url: 'staircase.html', label: 'Staircases' },
