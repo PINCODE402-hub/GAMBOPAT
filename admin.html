@@ -63,7 +63,7 @@
 
         <div id="upload-section">
             <label>Select Image File</label>
-            <input type="file" id="item-image" accept="image/*">
+            <input type="file" id="item-image" accept="image/*" multiple>
         </div>
 
         <div id="url-section" class="hidden">
@@ -162,15 +162,13 @@
             auth.signOut();
         });
 
-        // --- 3. ADD ITEM LOGIC (HYBRID) ---
+        // --- 3. ADD ITEM LOGIC (HYBRID & MULTIPLE) ---
         document.getElementById('btn-add').addEventListener('click', async () => {
             const category = document.getElementById('item-category').value;
             const name = document.getElementById('item-name').value;
             const sourceMode = document.querySelector('input[name="image-source"]:checked').value;
             const btnAdd = document.getElementById('btn-add');
             
-            let finalImageUrl = "";
-
             if(!name) {
                 alert("Please enter a name for the design!");
                 return;
@@ -180,50 +178,53 @@
                 btnAdd.disabled = true;
 
                 if (sourceMode === "upload") {
-                    // Process Cloudinary Upload
+                    // Process Multiple Cloudinary Uploads
                     const imageFileInput = document.getElementById('item-image');
+                    const files = imageFileInput.files;
                     
-                    if(imageFileInput.files.length === 0) {
-                        alert("Please select an image file to upload!");
-                        btnAdd.disabled = false;
-                        return;
+                    if(files.length === 0) {
+                        alert("Please select at least one image file!");
+                        btnAdd.disabled = false; return;
                     }
 
-                    btnAdd.innerText = "Uploading to Cloudinary...";
-                    const file = imageFileInput.files[0];
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                    btnAdd.innerText = `Uploading ${files.length} images...`;
+                    
+                    // Upload all selected files simultaneously
+                    const uploadPromises = Array.from(files).map(async (file) => {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-                    const cloudinaryResponse = await fetch(CLOUDINARY_UPLOAD_URL, {
-                        method: 'POST',
-                        body: formData
+                        const response = await fetch(CLOUDINARY_UPLOAD_URL, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        if (!response.ok) throw new Error(data.error?.message || "Failed to upload image.");
+                        return data.secure_url;
                     });
 
-                    const cloudinaryData = await cloudinaryResponse.json();
+                    const uploadedUrls = await Promise.all(uploadPromises);
 
-                    if (!cloudinaryResponse.ok) {
-                        throw new Error(cloudinaryData.error?.message || "Failed to upload image.");
-                    }
-
-                    finalImageUrl = cloudinaryData.secure_url;
+                    btnAdd.innerText = "Saving to Database...";
+                    // Save each uploaded image as an individual gallery item but under the same name
+                    const dbPromises = uploadedUrls.map(url => 
+                        db.collection(category).add({ name, imageUrl: url, createdAt: Date.now() })
+                    );
+                    await Promise.all(dbPromises);
 
                 } else {
                     // Process URL Input
-                    finalImageUrl = document.getElementById('item-url').value;
-                    
+                    const finalImageUrl = document.getElementById('item-url').value;
                     if(!finalImageUrl) {
                         alert("Please paste an image URL!");
-                        btnAdd.disabled = false;
-                        return;
+                        btnAdd.disabled = false; return;
                     }
+                    btnAdd.innerText = "Saving to Database...";
+                    await db.collection(category).add({ name, imageUrl: finalImageUrl, createdAt: Date.now() });
                 }
 
-                // Save to Firestore
-                btnAdd.innerText = "Saving to Database...";
-                await db.collection(category).add({ name, imageUrl: finalImageUrl, createdAt: Date.now() });
-                
-                alert("Item added successfully!");
+                alert("Item(s) added successfully!");
                 
                 // Clear the form
                 document.getElementById('item-name').value = "";
@@ -239,7 +240,7 @@
             }
         });
 
-        // Display current live items with a Delete button
+        // Display current live items with a Thumbnail and Delete button
         let unsubscribeLiveList;
         function loadManageItems(category) {
             if(unsubscribeLiveList) unsubscribeLiveList(); 
@@ -250,8 +251,13 @@
                     const itemData = documentItem.data();
                     const row = document.createElement('div');
                     row.className = 'item-row';
+                    
+                    // Added a flex container with the thumbnail image and the item name
                     row.innerHTML = `
-                        <span><strong>${itemData.name}</strong></span>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <img src="${itemData.imageUrl}" alt="${itemData.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #ccc;">
+                            <span><strong>${itemData.name}</strong></span>
+                        </div>
                         <button class="delete-btn" data-id="${documentItem.id}">Delete</button>
                     `;
                     itemsList.appendChild(row);

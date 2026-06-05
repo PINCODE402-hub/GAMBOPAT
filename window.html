@@ -17,17 +17,33 @@
                 <div><img src="favicon-96x96.png" alt="Gambopat Logo"></div>
                 <div><span class="gg">GAMBOPAT ENGINEERING</span></div>
             </div>
-            <button class="menu-btn" onclick="toggleMenu()">☰</button>
-            <nav id="nav" class="nav">
-                <a href="index.html">Home</a>
-                <a href="staircase.html">Staircase</a>
-                <a href="balustrades.html">Balustrade</a>
-                <a href="security-door.html">Doors</a>
-                <a href="chairs-tables.html">Furniture</a>
-                <a href="">Photo Gallery</a>
-                <a href="admin.html" style="color: #ffcc00; font-weight: bold;">Admin Panel</a>
-                <a href="https://wa.me/233557313743" target="_blank" class="cta">WhatsApp</a>
-            </nav>
+            
+            <div class="header-controls">
+                <nav id="nav-links" class="nav">
+                    <a href="index.html">Home</a>
+                    <a href="main-gates.html">Gates</a>
+                    <a href="window.html">Windows</a>
+                    <a href="staircase.html">Staircase</a>
+                    <a href="security-door.html">Doors</a>
+                    <a href="balustrades.html">Balustrades</a>
+                    <a href="chairs-tables.html">Furniture</a>
+                    <a href="admin.html" style="color: #ffcc00; font-weight: bold;">Admin Panel</a>
+                    <a href="https://wa.me/233243265708" target="_blank" class="cta">WhatsApp</a>
+                </nav>
+
+                <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+                <button class="menu-btn" onclick="toggleMenu()">☰</button>
+                
+                <div class="settings-menu" id="settingsMenu">
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="lightMode" onchange="toggleLightMode()">
+                            Light Mode
+                        </label>
+                    </div>
+                    <button class="close-settings" onclick="toggleSettings()">Close</button>
+                </div>
+            </div>
         </header>
 
         <section class="hero">
@@ -47,7 +63,7 @@
         <section class="cta-section">
             <h2>Need a Custom Window Frame?</h2>
             <p>Contact us today for professional fabrication</p>
-            <a href="https://wa.me/233557313743" target="_blank">Chat on WhatsApp</a>
+            <a href="https://wa.me/233243265708" target="_blank">Chat on WhatsApp</a>
         </section>
 
         <footer>
@@ -57,22 +73,78 @@
         <script>
             // Navigation menu toggle
             function toggleMenu() {
-                const nav = document.getElementById("nav");
+                const nav = document.getElementById("nav-links");
                 if (nav) nav.classList.toggle("show");
             }
 
-            // Listens to local storage configurations set by the header switches automatically
-            function applySavedTheme() {
-                if (localStorage.getItem('lightTheme') === 'true') {
-                    document.body.classList.add('light-theme');
-                } else {
-                    document.body.classList.remove('light-theme');
-                }
+            // Settings dropdown toggle
+            function toggleSettings() {
+                const menu = document.getElementById('settingsMenu');
+                if (menu) menu.classList.toggle('active');
             }
 
-            // Fire on document load instances
-            document.addEventListener("DOMContentLoaded", applySavedTheme);
+            // Unified Light Mode Toggle
+            function toggleLightMode() {
+                document.body.classList.toggle('light-theme');
+                const isLight = document.body.classList.contains('light-theme');
+                localStorage.setItem('lightTheme', isLight);
+            }
+
+            // Automatically apply saved theme & check the checkbox on load
+            window.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem('lightTheme') === 'true') {
+                    document.body.classList.add('light-theme');
+                    const lightModeCheckbox = document.getElementById('lightMode');
+                    if (lightModeCheckbox) {
+                        lightModeCheckbox.checked = true;
+                    }
+                }
+            });
+
+            // ==========================================
+            // GLOBAL IMAGE VIEWER & ZOOM LOGIC (FIXED)
+            // ==========================================
+            document.addEventListener("DOMContentLoaded", () => {
+                const imageViewer = document.getElementById("imageViewer");
+                const fullImage = document.getElementById("fullImage");
+                let isZoomed = false;
+
+                // 1. Open Viewer when any product image is clicked
+                document.body.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('product-img')) {
+                        imageViewer.style.display = "flex";
+                        fullImage.src = e.target.src;
+                        fullImage.style.transform = "scale(1)";
+                        fullImage.style.cursor = "zoom-in";
+                        isZoomed = false;
+                    }
+                });
+
+                // 2. Close Viewer when the 'X' is clicked
+                document.body.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('close-btn')) {
+                        imageViewer.style.display = "none";
+                    }
+                });
+
+                // 3. Zoom In and Out when the expanded image is clicked
+                if (fullImage) {
+                    fullImage.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevents clicks from triggering other elements
+                        if (!isZoomed) {
+                            fullImage.style.transform = "scale(2)";
+                            fullImage.style.cursor = "zoom-out";
+                            isZoomed = true;
+                        } else {
+                            fullImage.style.transform = "scale(1)";
+                            fullImage.style.cursor = "zoom-in";
+                            isZoomed = false;
+                        }
+                    });
+                }
+            });
         </script>
+
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -145,7 +217,7 @@
 
             // Order Logic
             function orderWhatsApp(productName, imageUrl){
-                let phoneNumber = "233557313743";
+                let phoneNumber = "233243265708";
                 let message = imageUrl
                     ? `I am interested in your product: ${productName}. Here is the image: ${imageUrl}`
                     : `I am interested in your product: ${productName}`;

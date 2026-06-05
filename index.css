@@ -7,7 +7,9 @@
                 --link-color: black;
             }
 
-            
+            body{
+                font-family:'Poppins',sans-serif;
+            }
             
             *{
 
@@ -80,8 +82,16 @@
                 margin: 0;
                 width: 100%;
                 height: 100%;
-                padding-top: 63px;
+                padding-top: 90px; /* Increased to clear the desktop header */
                 user-select: none;
+                overflow-x: hidden;
+            }
+
+            /* Add this media query to handle mobile screens */
+            @media (max-width: 768px) {
+                body {
+                    padding-top: 100px; /* Extra clearance for mobile */
+                }
             }
             .bg {
                 position: fixed;
@@ -126,6 +136,28 @@
                 border-radius: 25px;
                 
             }
+            /* --- Base Navigation Styles --- */
+            .nav {
+                display: flex;
+                align-items: center;
+                gap: 15px; /* Adds neat spacing between your links */
+                flex-wrap: wrap; /* Prevents harsh cut-offs */
+            }
+
+            /* Hide the hamburger button on desktop */
+            .menu-btn {
+                display: none; 
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.8rem;
+                cursor: pointer;
+            }
+
+            /* Ensure hamburger is visible in light theme if needed */
+            body.light-theme .menu-btn {
+                color: #333;
+            }
             .welcome-div{
                 background-image: url('https://ik.imagekit.io/pincode/imagess/cutting-metal-with-plasma-equipment-plant.jpg');
                 background-position: center;
@@ -141,7 +173,7 @@
                 animation-name: text-animation;
                 animation-iteration-count: 1;
                 animation-timing-function: ease;
-                animation-duration: 1s;
+                animation-duration: 3s;
             }
             @keyframes text-animation{
                 from{
@@ -173,7 +205,7 @@
                 animation-name: text-animation2;
                 animation-iteration-count: 1;
                 animation-timing-function: ease;
-                animation-duration: 1s;
+                animation-duration: 3s;
             }
             .info-div{
                 padding: 20px;
@@ -452,7 +484,6 @@
                 body.light-theme .nav a{
                     color: #ffffff;
                 }
-                
             }
             @media (min-width: 768px) and (max-width: 999px) {
                 body.light-theme .nav a{
@@ -463,7 +494,9 @@
                 body.light-theme .nav a{
                     color: #333333;
                 }
+                
             }
+
             /* --- LIGHT THEME OVERRIDES FOR INDEX --- */
             body.light-theme {
                 background-color: #f4f6f9 !important;
@@ -515,4 +548,230 @@
                 background-color: #ffffff !important;
                 color: #1a1a1a !important;
                 border: 1px solid #cccccc !important;
+            }
+
+            /* =========================
+            PROFESSIONAL UI UPGRADE
+            ========================= */
+
+            /* Smooth scrolling */
+            html{
+                scroll-behavior:smooth;
+            }
+
+            /* Global transitions */
+            *{
+                transition:
+                    background-color .35s ease,
+                    color .35s ease,
+                    border-color .35s ease,
+                    transform .35s ease,
+                    box-shadow .35s ease;
+            }
+
+            /* Glass effect cards */
+            .info-div,
+            .button-section,
+            .about-us-div,
+            .motto-div,
+            .need-div{
+                margin:20px auto;
+                max-width:1200px;
+                border-radius:20px;
+                backdrop-filter:blur(10px);
+                border:1px solid rgba(255,255,255,0.08);
+                box-shadow:0 8px 30px rgba(0,0,0,0.25);
+            }
+
+            /* Card hover lift */
+            .info-div:hover,
+            .button-section:hover,
+            .about-us-div:hover,
+            .motto-div:hover,
+            .need-div:hover{
+                transform:translateY(-6px);
+                box-shadow:0 15px 40px rgba(0,0,0,0.35);
+            }
+
+            /* Hero section enhancement */
+            .welcome-div{
+                position:relative;
+                overflow:hidden;
+            }
+
+            .welcome-div::before{
+                content:"";
+                position:absolute;
+                inset:0;
+                background:linear-gradient(
+                    135deg,
+                    rgba(0,0,0,.55),
+                    rgba(0,0,0,.2)
+                );
+            }
+
+            .welcome-header-text,
+            .welcome-text{
+                position:relative;
+                z-index:2;
+            }
+
+            /* Heading animation */
+            section h2{
+                position:relative;
+                overflow:hidden;
+            }
+
+            section h2::after{
+                content:"";
+                position:absolute;
+                bottom:0;
+                left:-100%;
+                width:100%;
+                height:3px;
+                background:#25D366;
+            }
+
+            section h2:hover::after{
+                left:0;
+                transition:left .6s ease;
+            }
+
+            /* Navigation polish */
+            .nav a{
+                position:relative;
+                padding:5px 0;
+            }
+
+            .nav a::after{
+                content:"";
+                position:absolute;
+                left:0;
+                bottom:-4px;
+                width:0%;
+                height:2px;
+                background:#25D366;
+                transition:width .3s ease;
+            }
+
+            .nav a:hover::after{
+                width:100%;
+            }
+
+            /* Logo animation */
+            header img{
+                transition:transform .5s ease;
+            }
+
+            header img:hover{
+                transform:rotate(360deg) scale(1.08);
+            }
+
+            /* WhatsApp button */
+            .cta{
+                transition:all .3s ease;
+            }
+
+            .cta:hover{
+                transform:translateY(-3px);
+                box-shadow:0 8px 20px rgba(37,211,102,.4);
+            }
+
+            /* Slideshow */
+            .slide-item img{
+                transition:transform .8s ease;
+            }
+
+            .slide-item:hover img{
+                transform:scale(1.05);
+            }
+
+            /* Contact icons */
+            .contacts img{
+                transition:all .3s ease;
+            }
+
+            .contacts a:hover img{
+                transform:translateY(-6px) scale(1.15);
+            }
+
+            /* Footer */
+            footer{
+                position:relative;
+                overflow:hidden;
+            }
+
+            footer::before{
+                content:"";
+                position:absolute;
+                top:0;
+                left:-100%;
+                width:100%;
+                height:2px;
+                background:#25D366;
+            }
+
+            footer:hover::before{
+                left:100%;
+                transition:1.2s ease;
+            }
+
+            /* Fade-in sections */
+            .info-div,
+            .button-section,
+            .about-us-div,
+            .motto-div,
+            .need-div{
+                animation:fadeUp 1s ease;
+            }
+
+            @keyframes fadeUp{
+                from{
+                    opacity:0;
+                    transform:translateY(40px);
+                }
+                to{
+                    opacity:1;
+                    transform:translateY(0);
+                }
+            }
+            /* --- Mobile & Tablet Layout --- */
+            @media (max-width: 1100px) {
+                .gg { 
+                    font-size: 18px; /* Slightly smaller logo text to save space */
+                }
+                
+                .menu-btn { 
+                    display: block; /* Show the hamburger button */
+                    margin-right: 10px; 
+                }
+                
+                .nav {
+                    display: none; /* Hide the horizontal links */
+                    position: absolute;
+                    top: 70px; /* Pushes the menu down below the header */
+                    left: 0;
+                    right: 0;
+                    background-color: rgb(46, 45, 45);
+                    flex-direction: column;
+                    width: 100%;
+                    padding: 20px 0;
+                    text-align: center;
+                    border-bottom: 2px solid #25D366;
+                }
+                
+                .nav a {
+                    padding: 12px 0;
+                    width: 100%;
+                    display: block;
+                }
+
+                .nav.show { 
+                    display: flex; /* Shows the vertical menu when toggled */
+                }
+                
+                body.light-theme .nav {
+                    background-color: #ffffff;
+                    border-bottom: 2px solid #e67e22;
+                }
             }
