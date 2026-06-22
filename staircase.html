@@ -2,69 +2,59 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Staircases | Gambopat Engineering & Training Center</title>
-        <meta name="description" content="Custom welded staircases fabricated by Gambopat Engineering & Training Center in Ashaiman, Ghana.">
-        <meta name="keywords" content="metal staircase Ghana, welded stairs Ashaiman, fabrication Ghana">
-        <meta name="author" content="Gambopat Engineering & Training Center">
-        <meta name="robots" content="index, follow">
+        <title>Staircases | Gambopat Engineering</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="canonical" href="https://gambopat.com/staircase.html">
         <link rel="icon" type="image/png" href="favicon-32x32.png">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <header>
             <div class="hed-f">
-                <div><img src="favicon-96x96.png" alt="Gambopat Logo"></div>
-                <div><span class="gg">GAMBOPAT ENGINEERING</span></div>
+                <img src="favicon-96x96.png" alt="Gambopat Logo">
+                <span class="gg">GAMBOPAT</span>
             </div>
             
-            <div class="header-controls">
-                <nav id="nav-links" class="nav">
-                    <a href="index.html">Home</a>
-                    <a href="main-gates.html">Gates</a>
-                    <a href="window.html">Windows</a>
-                    <a href="staircase.html">Staircase</a>
-                    <a href="security-door.html">Doors</a>
-                    <a href="balustrades.html">Balustrades</a>
-                    <a href="chairs-tables.html">Furniture</a>
-                    <a href="admin.html" style="color: #ffcc00; font-weight: bold;">Admin Panel</a>
-                    <a href="https://wa.me/233243265708" target="_blank" class="cta">WhatsApp</a>
-                </nav>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav-links" class="nav">
+                <a href="index.html">Home</a>
+                <a href="main-gates.html">Gates</a>
+                <a href="window.html">Windows</a>
+                <a href="staircase.html" style="color: var(--gold);">Staircase</a>
+                <a href="security-door.html">Doors</a>
+                <a href="balustrades.html">Balustrades</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="admin.html" style="color: var(--text-muted); font-size: 0.8rem;">Admin</a>
+                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+            </nav>
 
-                <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
-                <button class="menu-btn" onclick="toggleMenu()">☰</button>
-                
-                <div class="settings-menu" id="settingsMenu">
-                    <div class="setting-item">
-                        <label>
-                            <input type="checkbox" id="lightMode" onchange="toggleLightMode()">
-                            Light Mode
-                        </label>
-                    </div>
-                    <button class="close-settings" onclick="toggleSettings()">Close</button>
-                </div>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <div class="settings-menu" id="settingsMenu">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="lightMode" onchange="toggleLightMode()">
+                    Light Mode
+                </label>
+                <button class="close-settings" onclick="toggleSettings()" style="margin-top: 10px; width: 100%; padding: 8px; background: var(--gold); border: none; color: #111; font-weight: bold; border-radius: 5px;">Apply</button>
             </div>
         </header>
 
         <section class="hero">
-            <h2>Custom Staircase Designs</h2>
-            <p>Strong, durable, and professionally fabricated staircases in Ghana</p>
+            <h2>Custom Staircases</h2>
+            <p>Structural metal staircases tailored for residential and commercial spaces.</p>
         </section>
 
-        <section class="gallery" id="gallery-container">
-            <p style="text-align:center; width:100%; color:inherit;">Loading staircase designs...</p>
+        <section class="gallery" id="dynamic-gallery">
+            <p style="text-align: center; width: 100%; color: var(--text-muted); grid-column: 1 / -1;">Connecting to workshop showroom...</p>
         </section>
 
         <div class="image-viewer" id="imageViewer">
             <span class="close-btn" onclick="closeViewer()">×</span>
-            <img id="fullImage" alt="Fullscreen View">
+            <img id="fullImage" alt="Expanded staircase view">
         </div>
 
         <section class="cta-section">
-            <h2>Need a Custom Staircase?</h2>
-            <p>Contact us today for professional fabrication</p>
-            <a href="https://wa.me/233243265708" target="_blank">Chat on WhatsApp</a>
+            <h2 style="margin-bottom: 10px;">Build a Strong Foundation</h2>
+            <p style="color: var(--text-muted);">Contact our engineers today for a precise quotation.</p>
+            <a href="https://wa.me/233243265708" target="_blank">Enquire on WhatsApp</a>
         </section>
 
         <footer>
@@ -72,210 +62,110 @@
         </footer>
 
         <script>
-            // Navigation menu toggle
-            function toggleMenu() {
-                const nav = document.getElementById("nav-links");
-                if (nav) nav.classList.toggle("show");
-            }
-
-            // Settings dropdown toggle
-            function toggleSettings() {
-                const menu = document.getElementById('settingsMenu');
-                if (menu) menu.classList.toggle('active');
-            }
-
-            // Unified Light Mode Toggle
+            function toggleMenu() { document.getElementById("nav-links").classList.toggle("show"); }
+            function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('active'); }
             function toggleLightMode() {
                 document.body.classList.toggle('light-theme');
-                const isLight = document.body.classList.contains('light-theme');
-                localStorage.setItem('lightTheme', isLight);
+                localStorage.setItem('lightTheme', document.body.classList.contains('light-theme'));
             }
 
-            // Automatically apply saved theme & check the checkbox on load
             window.addEventListener("DOMContentLoaded", () => {
                 if (localStorage.getItem('lightTheme') === 'true') {
                     document.body.classList.add('light-theme');
                     const lightModeCheckbox = document.getElementById('lightMode');
-                    if (lightModeCheckbox) {
-                        lightModeCheckbox.checked = true;
-                    }
+                    if (lightModeCheckbox) lightModeCheckbox.checked = true;
                 }
             });
 
-            // ==========================================
-            // GLOBAL IMAGE VIEWER & ZOOM LOGIC (FIXED)
-            // ==========================================
-            document.addEventListener("DOMContentLoaded", () => {
-                const imageViewer = document.getElementById("imageViewer");
-                const fullImage = document.getElementById("fullImage");
-                let isZoomed = false;
+            const imageViewer = document.getElementById("imageViewer");
+            const fullImage = document.getElementById("fullImage");
+            let isZoomed = false;
 
-                // 1. Open Viewer when any product image is clicked
-                document.body.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('product-img')) {
-                        imageViewer.style.display = "flex";
-                        fullImage.src = e.target.src;
+            document.body.addEventListener('click', (e) => {
+                if (e.target.classList.contains('product-img')) {
+                    imageViewer.style.display = "flex";
+                    fullImage.src = e.target.src;
+                    fullImage.style.transform = "scale(1)";
+                    fullImage.style.cursor = "zoom-in";
+                    isZoomed = false;
+                }
+                if (e.target.classList.contains('close-btn')) {
+                    imageViewer.style.display = "none";
+                }
+            });
+
+            if (fullImage) {
+                fullImage.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!isZoomed) {
+                        fullImage.style.transform = "scale(1.8)";
+                        fullImage.style.cursor = "zoom-out";
+                        isZoomed = true;
+                    } else {
                         fullImage.style.transform = "scale(1)";
                         fullImage.style.cursor = "zoom-in";
                         isZoomed = false;
                     }
                 });
-
-                // 2. Close Viewer when the 'X' is clicked
-                document.body.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('close-btn')) {
-                        imageViewer.style.display = "none";
-                    }
-                });
-
-                // 3. Zoom In and Out when the expanded image is clicked
-                if (fullImage) {
-                    fullImage.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevents clicks from triggering other elements
-                        if (!isZoomed) {
-                            fullImage.style.transform = "scale(2)";
-                            fullImage.style.cursor = "zoom-out";
-                            isZoomed = true;
-                        } else {
-                            fullImage.style.transform = "scale(1)";
-                            fullImage.style.cursor = "zoom-in";
-                            isZoomed = false;
-                        }
-                    });
-                }
-            });
+            }
         </script>
-
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-            // Live Firebase Configuration
             const firebaseConfig = {
                 apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA",
                 authDomain: "gambopat-327be.firebaseapp.com",
                 projectId: "gambopat-327be",
                 storageBucket: "gambopat-327be.firebasestorage.app",
                 messagingSenderId: "334515883953",
-                appId: "1:334515883953:web:3cd35ada86b25770a53790",
-                measurementId: "G-Y9RG1NKHYF"
+                appId: "1:334515883953:web:3cd35ada86b25770a53790"
             };
-
-            // Initialize Firebase
+            
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
+            const galleryContainer = document.getElementById('dynamic-gallery');
 
-            // Target gallery container element
-            const galleryContainer = document.getElementById('gallery-container');
-            window.zoomed = false;
-            
-            // Listen to the 'staircases' collection in real-time
+            // Targeting "staircases" collection
             onSnapshot(collection(db, "staircases"), (snapshot) => {
                 if (!galleryContainer) return;
-                galleryContainer.innerHTML = ""; // Clear loader/previous data
+                galleryContainer.innerHTML = ""; 
                 
-                if (snapshot.empty) {
-                    galleryContainer.innerHTML = "<p style='text-align:center; width:100%; color:inherit;'>No designs added yet.</p>";
+                if(snapshot.empty) {
+                    galleryContainer.innerHTML = "<p style='color:var(--text-muted); text-align:center; grid-column: 1 / -1;'>No designs uploaded to this category yet.</p>";
                     return;
                 }
 
                 snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const safeName = data.name.replace(/'/g, "\\'");
+                    const item = doc.data();
+                    const safeName = item.name.replace(/'/g, "\\'");
                     
-                    // Create Card Component dynamically
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.innerHTML = `
-                        <img src="${data.imageUrl}" class="product-img" alt="${data.name}">
+                        <img src="${item.imageUrl}" class="product-img" alt="${item.name}">
                         <div class="info">
-                            <p>${data.name}</p>
-                            <button class="order-btn" data-name="${safeName}" data-url="${data.imageUrl}">
-                                Order on WhatsApp
+                            <p>${item.name}</p>
+                            <button class="order-btn" data-name="${safeName}" data-url="${item.imageUrl}">
+                                Enquire Now
                             </button>
                         </div>
                     `;
                     galleryContainer.appendChild(card);
                 });
-
-                // Bind image click event handlers to the new elements
-                setupImageViewer();
-
-                // Check parameters for slideshow cross-navigation redirects
-                checkUrlParametersForZoom();
             });
 
-            // Handle WhatsApp Order Clicks via Event Delegation
             if (galleryContainer) {
                 galleryContainer.addEventListener('click', (e) => {
                     if (e.target.classList.contains('order-btn')) {
                         const name = e.target.getAttribute('data-name');
                         const url = e.target.getAttribute('data-url');
-                        orderWhatsApp(name, url);
+                        let phone = "233243265708";
+                        let msg = `Hello Gambopat Engineering! I am interested in this design: ${name}. Reference: ${url}`;
+                        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
                     }
                 });
-            }
-
-            // Open message link in WhatsApp
-            function orderWhatsApp(productName, imageUrl){
-                let phoneNumber = "233243265708";
-                let message = imageUrl
-                    ? `I am interested in your product: ${productName}. Here is the image: ${imageUrl}`
-                    : `I am interested in your product: ${productName}`;
-                let whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-                window.open(whatsappURL, "_blank");
-            }
-
-            // Image Zoom Viewer functionality
-            function setupImageViewer() {
-                const productImages = document.querySelectorAll(".product-img");
-                const imageViewer = document.getElementById("imageViewer");
-                const fullImage = document.getElementById("fullImage");
-
-                if (!imageViewer || !fullImage) return;
-
-                productImages.forEach(img => {
-                    img.onclick = () => {
-                        imageViewer.style.display = "flex";
-                        fullImage.src = img.src;
-                        fullImage.style.transform = "scale(1)";
-                        window.zoomed = false;
-                    };
-                });
-
-                window.closeViewer = function() {
-                    imageViewer.style.display = "none";
-                }
-
-                fullImage.onclick = () => {
-                    if(!window.zoomed){
-                        fullImage.style.transform = "scale(2)";
-                        fullImage.style.cursor = "zoom-out";
-                        window.zoomed = true;
-                    } else {
-                        fullImage.style.transform = "scale(1)";
-                        fullImage.style.cursor = "zoom-in";
-                        window.zoomed = false;
-                    }
-                };
-            }
-
-            function checkUrlParametersForZoom() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const targetImgUrl = urlParams.get('img');
-                
-                if (targetImgUrl) {
-                    const imageViewer = document.getElementById("imageViewer");
-                    const fullImage = document.getElementById("fullImage");
-                    
-                    if (imageViewer && fullImage) {
-                        imageViewer.style.display = "flex";
-                        fullImage.src = targetImgUrl;
-                        fullImage.style.transform = "scale(1)";
-                        window.zoomed = false;
-                    }
-                }
             }
         </script>
     </body>
