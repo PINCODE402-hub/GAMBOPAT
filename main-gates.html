@@ -3,59 +3,47 @@
     <head>
         <meta charset="UTF-8">
         <title>Main Gates | Gambopat Engineering & Training Center</title>
-        <meta name="description" content="Strong and modern main gates fabricated by Gambopat Engineering & Training Center in Ashaiman, Ghana.">
-        <meta name="keywords" content="main gates welding Ghana, metal gates Ashaiman, fabrication Ghana">
-        <meta name="author" content="Gambopat Engineering & Training Center">
-        <meta name="robots" content="index, follow">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="canonical" href="https://gambopat.com/main-gates.html">
         <link rel="icon" type="image/png" href="favicon-32x32.png">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-       <header>
+        <header>
             <div class="hed-f">
-                <div><img src="favicon-96x96.png" alt="Gambopat Logo"></div>
-                <div><span class="gg">GAMBOPAT ENGINEERING</span></div>
+                <img src="favicon-96x96.png" alt="Gambopat Logo">
+                <span class="gg">GAMBOPAT</span>
             </div>
             
-            <div class="header-controls">
-                <nav id="nav-links" class="nav">
-                    <a href="index.html">Home</a>
-                    <a href="main-gates.html">Gates</a>
-                    <a href="window.html">Windows</a>
-                    <a href="staircase.html">Staircase</a>
-                    <a href="security-door.html">Doors</a>
-                    <a href="balustrades.html">Balustrades</a>
-                    <a href="chairs-tables.html">Furniture</a>
-                    <a href="admin.html" style="color: #ffcc00; font-weight: bold;">Admin Panel</a>
-                    <a href="https://wa.me/233243265708" target="_blank" class="cta">WhatsApp</a>
-                </nav>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav-links" class="nav">
+                <a href="index.html">Home</a>
+                <a href="main-gates.html" style="color: var(--gold);">Gates</a>
+                <a href="window.html">Windows</a>
+                <a href="staircase.html">Staircase</a>
+                <a href="security-door.html">Doors</a>
+                <a href="balustrades.html">Balustrades</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="admin.html" style="color: var(--text-muted); font-size: 0.8rem;">Admin</a>
+                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+            </nav>
 
-                <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
-                <button class="menu-btn" onclick="toggleMenu()">☰</button>
-                
-                <div class="settings-menu" id="settingsMenu">
-                    <div class="setting-item">
-                        <label>
-                            <input type="checkbox" id="lightMode" onchange="toggleLightMode()">
-                            Light Mode
-                        </label>
-                    </div>
-                    <button class="close-settings" onclick="toggleSettings()">Close</button>
-                </div>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <div class="settings-menu" id="settingsMenu">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="lightMode" onchange="toggleLightMode()">
+                    Light Mode
+                </label>
+                <button class="close-settings" onclick="toggleSettings()" style="margin-top: 10px; width: 100%; padding: 8px; background: var(--gold); border: none; color: #111; font-weight: bold; border-radius: 5px;">Apply</button>
             </div>
         </header>
 
         <section class="hero">
             <h2>Main Gate Designs</h2>
-            <p>Strong, modern and secure gate fabrication in Ghana</p>
+            <p>Strong, modern and secure gate fabrication forged for maximum durability.</p>
         </section>
 
         <section class="gallery" id="dynamic-gallery">
+            <p style="text-align: center; width: 100%; color: var(--text-muted); grid-column: 1 / -1;">Connecting to workshop showroom...</p>
         </section>
 
         <div class="image-viewer" id="imageViewer">
@@ -64,9 +52,9 @@
         </div>
 
         <section class="cta-section">
-            <h2>Need a Custom Gate?</h2>
-            <p>Contact us today for professional fabrication</p>
-            <a href="https://wa.me/233243265708" target="_blank">Chat on WhatsApp</a>
+            <h2 style="margin-bottom: 10px;">Need a Custom Gate?</h2>
+            <p style="color: var(--text-muted);">Contact our engineers today for a precise quotation.</p>
+            <a href="https://wa.me/233243265708" target="_blank">Enquire on WhatsApp</a>
         </section>
 
         <footer>
@@ -74,85 +62,60 @@
         </footer>
 
         <script>
-            // Navigation menu toggle
-            function toggleMenu() {
-                const nav = document.getElementById("nav-links");
-                if (nav) nav.classList.toggle("show");
-            }
-
-            // Settings dropdown toggle
-            function toggleSettings() {
-                const menu = document.getElementById('settingsMenu');
-                if (menu) menu.classList.toggle('active');
-            }
-
-            // Unified Light Mode Toggle
+            function toggleMenu() { document.getElementById("nav-links").classList.toggle("show"); }
+            function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('active'); }
+            
             function toggleLightMode() {
                 document.body.classList.toggle('light-theme');
-                const isLight = document.body.classList.contains('light-theme');
-                localStorage.setItem('lightTheme', isLight);
+                localStorage.setItem('lightTheme', document.body.classList.contains('light-theme'));
             }
 
-            // Automatically apply saved theme & check the checkbox on load
             window.addEventListener("DOMContentLoaded", () => {
                 if (localStorage.getItem('lightTheme') === 'true') {
                     document.body.classList.add('light-theme');
                     const lightModeCheckbox = document.getElementById('lightMode');
-                    if (lightModeCheckbox) {
-                        lightModeCheckbox.checked = true;
-                    }
+                    if (lightModeCheckbox) lightModeCheckbox.checked = true;
                 }
             });
 
-            // ==========================================
-            // GLOBAL IMAGE VIEWER & ZOOM LOGIC (FIXED)
-            // ==========================================
-            document.addEventListener("DOMContentLoaded", () => {
-                const imageViewer = document.getElementById("imageViewer");
-                const fullImage = document.getElementById("fullImage");
-                let isZoomed = false;
+            // Lightbox Viewer Logic
+            const imageViewer = document.getElementById("imageViewer");
+            const fullImage = document.getElementById("fullImage");
+            let isZoomed = false;
 
-                // 1. Open Viewer when any product image is clicked
-                document.body.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('product-img')) {
-                        imageViewer.style.display = "flex";
-                        fullImage.src = e.target.src;
+            document.body.addEventListener('click', (e) => {
+                if (e.target.classList.contains('product-img')) {
+                    imageViewer.style.display = "flex";
+                    fullImage.src = e.target.src;
+                    fullImage.style.transform = "scale(1)";
+                    fullImage.style.cursor = "zoom-in";
+                    isZoomed = false;
+                }
+                if (e.target.classList.contains('close-btn')) {
+                    imageViewer.style.display = "none";
+                }
+            });
+
+            if (fullImage) {
+                fullImage.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!isZoomed) {
+                        fullImage.style.transform = "scale(1.8)";
+                        fullImage.style.cursor = "zoom-out";
+                        isZoomed = true;
+                    } else {
                         fullImage.style.transform = "scale(1)";
                         fullImage.style.cursor = "zoom-in";
                         isZoomed = false;
                     }
                 });
-
-                // 2. Close Viewer when the 'X' is clicked
-                document.body.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('close-btn')) {
-                        imageViewer.style.display = "none";
-                    }
-                });
-
-                // 3. Zoom In and Out when the expanded image is clicked
-                if (fullImage) {
-                    fullImage.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevents clicks from triggering other elements
-                        if (!isZoomed) {
-                            fullImage.style.transform = "scale(2)";
-                            fullImage.style.cursor = "zoom-out";
-                            isZoomed = true;
-                        } else {
-                            fullImage.style.transform = "scale(1)";
-                            fullImage.style.cursor = "zoom-in";
-                            isZoomed = false;
-                        }
-                    });
-                }
-            });
+            }
         </script>
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-            // Initialize Firebase
             const firebaseConfig = {
                 apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA",
                 authDomain: "gambopat-327be.firebaseapp.com",
@@ -162,18 +125,18 @@
                 appId: "1:334515883953:web:3cd35ada86b25770a53790",
                 measurementId: "G-Y9RG1NKHYF"
             };
+            
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-
             const galleryContainer = document.getElementById('dynamic-gallery');
 
-            // Real-time listener for "gates" collection
+            // CHANGE "gates" TO "doors", "windows", etc., FOR OTHER PAGES
             onSnapshot(collection(db, "gates"), (snapshot) => {
                 if (!galleryContainer) return;
-                galleryContainer.innerHTML = ""; // Clear loading state
+                galleryContainer.innerHTML = ""; 
                 
                 if(snapshot.empty) {
-                    galleryContainer.innerHTML = "<p style='color:inherit; text-align:center; width:100%;'>No designs uploaded yet.</p>";
+                    galleryContainer.innerHTML = "<p style='color:var(--text-muted); text-align:center; grid-column: 1 / -1;'>No designs uploaded to this category yet.</p>";
                     return;
                 }
 
@@ -181,7 +144,6 @@
                     const item = doc.data();
                     const safeName = item.name.replace(/'/g, "\\'");
                     
-                    // Create the card dynamically
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.innerHTML = `
@@ -189,34 +151,24 @@
                         <div class="info">
                             <p>${item.name}</p>
                             <button class="order-btn" data-name="${safeName}" data-url="${item.imageUrl}">
-                                Order on WhatsApp
+                                Enquire Now
                             </button>
                         </div>
                     `;
                     galleryContainer.appendChild(card);
                 });
-                
             });
 
-            // Event Delegation for the WhatsApp Order Button
             if (galleryContainer) {
                 galleryContainer.addEventListener('click', (e) => {
                     if (e.target.classList.contains('order-btn')) {
                         const name = e.target.getAttribute('data-name');
                         const url = e.target.getAttribute('data-url');
-                        orderWhatsApp(name, url);
+                        let phoneNumber = "233243265708";
+                        let message = `Hello Gambopat Engineering! I am interested in this design: ${name}. Reference: ${url}`;
+                        window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
                     }
                 });
-            }
-
-            // The actual order logic with your updated number
-            function orderWhatsApp(productName, imageUrl){
-                let phoneNumber = "233243265708";
-                let message = imageUrl
-                    ? `I am interested in your product: ${productName}. Here is the image: ${imageUrl}`
-                    : `I am interested in your product: ${productName}`;
-                let whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-                window.open(whatsappURL, "_blank");
             }
         </script>
     </body>
