@@ -63,6 +63,47 @@
         .nav-links { text-align: center; margin-bottom: 30px; font-size: 0.9rem; color: var(--text-muted); }
         .nav-links a { color: var(--gold); text-decoration: none; margin: 0 10px; }
         .nav-links a:hover { text-decoration: underline; }
+
+        /* Mobile admin improvements - preserves the existing theme */
+        .admin-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:15px; }
+        .admin-stat { background:rgba(0,0,0,.2); border:1px solid var(--glass-border); border-radius:8px; padding:12px; text-align:center; min-width:0; }
+        .admin-stat strong { display:block; color:var(--gold); font-size:1.25rem; }
+        .admin-stat span { color:var(--text-muted); font-size:.72rem; }
+        .gallery-tools { display:grid; grid-template-columns:minmax(0,1fr) minmax(150px,.7fr) minmax(150px,.7fr) auto; gap:10px; align-items:center; }
+        .gallery-tools input, .gallery-tools select { margin-top:0; }
+        .gallery-count { color:var(--text-muted); font-size:.8rem; white-space:nowrap; }
+        .admin-row-actions { display:flex; gap:8px; flex-shrink:0; }
+        .edit-btn { width:auto; background:transparent; color:var(--gold); border:1px solid var(--gold); padding:8px 16px; margin:0; }
+        .edit-btn:hover { background:var(--gold); color:#111; box-shadow:0 0 10px rgba(212,175,55,.3); }
+        .drag-handle { color:var(--text-muted); cursor:grab; padding:4px; flex-shrink:0; }
+        .item-row.dragging { opacity:.55; }
+        .item-row.drop-target { border-color:var(--gold); }
+        .admin-item-meta { color:var(--text-muted); font-size:.7rem; margin-top:3px; overflow-wrap:anywhere; }
+        .new-design-badge { background:var(--gold); color:#111; border-radius:999px; padding:2px 7px; font-size:.6rem; font-weight:700; }
+        @media (max-width: 700px) {
+            body { padding:12px 8px; align-items:flex-start; }
+            .container { max-width:none; padding:20px 14px; border-radius:12px; }
+            h2 { font-size:1.2rem; margin-bottom:20px; }
+            h3 { font-size:1rem; margin-top:24px; }
+            .admin-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .source-toggle { flex-direction:column; gap:10px; }
+            .source-toggle label { padding:5px 0; }
+            .gallery-tools { grid-template-columns:1fr 1fr; }
+            .gallery-tools input { grid-column:1 / -1; }
+            .gallery-count { grid-column:1 / -1; }
+            .item-row { display:grid; grid-template-columns:auto 54px minmax(0,1fr); gap:8px; align-items:start; }
+            .item-row img { width:54px; height:54px; }
+            .admin-row-actions { grid-column:1 / -1; width:100%; display:grid; grid-template-columns:1fr 1fr; margin-top:6px; }
+            .admin-row-actions button { width:100%; }
+            .nav-links { line-height:1.8; }
+            input[type="text"], input[type="url"], input[type="email"], input[type="password"], input[type="file"], select { font-size:16px; }
+        }
+        @media (max-width: 400px) {
+            .gallery-tools { grid-template-columns:1fr; }
+            .gallery-tools input, .gallery-count { grid-column:auto; }
+            .admin-stats { grid-template-columns:1fr 1fr; gap:7px; }
+            .admin-stat { padding:9px 5px; }
+        }
     </style>
 </head>
 <body>
@@ -223,7 +264,9 @@
         // Add Item Data
         document.getElementById('btn-add').addEventListener('click', async () => {
             const category = document.getElementById('item-category').value;
-            const name = document.getElementById('item-name').value;
+            const name = document.getElementById('item-name').value.trim();
+            const tags = document.getElementById('item-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+            const featured = document.getElementById('item-featured').checked;
             const sourceMode = document.querySelector('input[name="image-source"]:checked').value;
             const btnAdd = document.getElementById('btn-add');
             
@@ -407,16 +450,24 @@
             }
 
             if(e.target.classList.contains('edit-btn')) {
-                const current = managedItems.find(item => item.id === id);
+                const current = manageItems.find(item => item.id === id);
                 if (!current) return;
-                const newName = prompt("Enter the new design name:", current.name || "");
+                const newName = prompt("Design name:", current.name || "");
                 if (newName === null) return;
                 const trimmed = newName.trim();
-                if (!trimmed) {
-                    alert("Design name cannot be empty.");
-                    return;
-                }
-                await db.collection(viewCategorySelect.value).doc(id).update({ name: trimmed });
+                if (!trimmed) { alert("Design name cannot be empty."); return; }
+                const currentTags = Array.isArray(current.tags) ? current.tags.join(', ') : (current.tags || '');
+                const newTags = prompt("Tags (comma separated):", currentTags);
+                if (newTags === null) return;
+                const featuredChoice = confirm("Make this design Featured?");
+                const tagsArray = newTags.split(',').map(t => t.trim()).filter(Boolean);
+                await db.collection(viewCategorySelect.value).doc(id).update({
+                    name: trimmed,
+                    tags: tagsArray,
+                    featured: featuredChoice,
+                    featuredOrder: featuredChoice ? (current.featuredOrder ?? Date.now()) : 999999999
+                });
+                alert("Design updated successfully.");
             }
         });
     </script>
