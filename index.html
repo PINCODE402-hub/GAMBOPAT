@@ -183,7 +183,7 @@
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-            import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+            import { getFirestore, collection, onSnapshot, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
             const firebaseConfig = {
                 apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA",
@@ -197,8 +197,10 @@
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             let activeSnapshotUnsubscribe = null;
+            let targetCollectionForTracking = 'gates';
 
             function streamShowcaseGallery(targetCollection) {
+                targetCollectionForTracking = targetCollection;
                 const sliderWrapper = document.getElementById('live-preview-slider');
                 if (!sliderWrapper) return;
 
@@ -215,19 +217,29 @@
                         return;
                     }
 
-                    snapshot.forEach((doc) => {
+                    const docs = snapshot.docs.sort((a, b) => {
+                        const aData = a.data();
+                        const bData = b.data();
+                        const aTime = typeof aData.createdAt?.toMillis === 'function' ? aData.createdAt.toMillis() : Number(aData.createdAt || 0);
+                        const bTime = typeof bData.createdAt?.toMillis === 'function' ? bData.createdAt.toMillis() : Number(bData.createdAt || 0);
+                        return bTime - aTime;
+                    });
+
+                    docs.forEach((doc) => {
                         const fileData = doc.data();
-                        const safeTitle = fileData.name.replace(/'/g, "\\'");
+                        const safeTitle = String(fileData.name || "Design").replace(/'/g, "\\'");
+                        const displayUrl = fileData.imageUrl && fileData.imageUrl.includes('res.cloudinary.com') ? fileData.imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_1200/') : fileData.imageUrl;
 
                         const designCard = document.createElement('div');
                         designCard.className = 'card';
+                        designCard.dataset.id = doc.id;
 
                         designCard.innerHTML = `
                             <div style="overflow: hidden;">
-                                <img src="${fileData.imageUrl}" class="product-img launch-home-viewer" alt="${fileData.name}">
+                                <img src="${displayUrl}" class="product-img launch-home-viewer" alt="${fileData.name || 'Design'}">
                             </div>
                             <div class="card-info">
-                                <p>${fileData.name}</p>
+                                <p>${fileData.name || 'Untitled design'}</p>
                                 <button class="action-order-whatsapp" data-name="${safeTitle}" data-url="${fileData.imageUrl}">
                                     Enquire Now
                                 </button>
@@ -256,6 +268,8 @@
 
                 document.getElementById('live-preview-slider').addEventListener('click', (e) => {
                     if (e.target.classList.contains('action-order-whatsapp')) {
+                        const docId = e.target.closest('.card')?.dataset.id;
+                        if (docId) updateDoc(doc(db, targetCollectionForTracking || 'gates', docId), { enquiries: increment(1) }).catch(()=>{});
                         const productName = e.target.getAttribute('data-name');
                         const productUrl = e.target.getAttribute('data-url');
                         const phoneString = "233243265708";
@@ -270,6 +284,8 @@
 
                 document.body.addEventListener('click', (e) => {
                     if (e.target.classList.contains('launch-home-viewer')) {
+                        const cardId = e.target.closest('.card')?.dataset.id;
+                        if (cardId) updateDoc(doc(db, targetCollectionForTracking, cardId), { views: increment(1) }).catch(()=>{});
                         previewViewer.style.display = 'flex';
                         fullDisplayImage.src = e.target.src;
                         fullDisplayImage.style.transform = 'scale(1)';

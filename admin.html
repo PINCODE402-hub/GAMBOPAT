@@ -83,6 +83,16 @@
             Status: Secure Connection | <a href="#" id="btn-logout">Terminate Session</a> | <a href="index.html">Live Site</a>
         </div>
         
+        <h3>Showroom Overview</h3>
+        <div class="admin-stats" id="admin-stats">
+            <div class="admin-stat"><strong id="stat-total">—</strong><span>Total designs</span></div>
+            <div class="admin-stat"><strong id="stat-featured">—</strong><span>Featured</span></div>
+            <div class="admin-stat"><strong id="stat-new">—</strong><span>Added in 30 days</span></div>
+            <div class="admin-stat"><strong id="stat-views">—</strong><span>Total views</span></div>
+            <div class="admin-stat"><strong id="stat-enquiries">—</strong><span>WhatsApp enquiries</span></div>
+            <div class="admin-stat"><strong id="stat-tags">—</strong><span>Unique tags</span></div>
+        </div>
+
         <h3>Deploy New Blueprint</h3>
         <label>Target Category</label>
         <select id="item-category">
@@ -96,6 +106,11 @@
 
         <label>Design Identifier (Name)</label>
         <input type="text" id="item-name" placeholder="e.g., Modern Arch Gate V2">
+
+        <label>Tags (comma separated)</label>
+        <input type="text" id="item-tags" placeholder="e.g., Modern, Sliding, Double Gate">
+
+        <label style="display:flex;align-items:center;gap:8px;color:var(--text-main);cursor:pointer;"><input type="checkbox" id="item-featured" style="accent-color:var(--gold);width:18px;height:18px;"> Mark as Featured</label>
 
         <label>Asset Source</label>
         <div class="source-toggle">
@@ -126,7 +141,23 @@
             <option value="furniture">Chairs & Tables</option>
         </select>
 
-        <div id="items-list" style="margin-top: 20px;"></div>
+        <div class="gallery-tools" style="margin-top: 20px;">
+            <input type="search" id="admin-search" placeholder="Search uploaded designs..." aria-label="Search uploaded designs">
+            <select id="admin-sort" aria-label="Sort uploaded designs">
+                <option value="newest">Newest first</option>
+                <option value="featured">Featured first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="name">Name A–Z</option>
+                <option value="manual">Manual featured order</option>
+            </select>
+            <select id="admin-featured-filter" aria-label="Filter featured designs">
+                <option value="all">All designs</option>
+                <option value="featured">Featured only</option>
+                <option value="regular">Non-featured only</option>
+            </select>
+            <span class="gallery-count" id="admin-count"></span>
+        </div>
+        <div id="items-list"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -218,12 +249,12 @@
 
                     const uploadedUrls = await Promise.all(uploadPromises);
                     btnAdd.innerText = "Syncing Database...";
-                    await Promise.all(uploadedUrls.map(url => db.collection(category).add({ name, imageUrl: url, createdAt: Date.now() })));
+                    await Promise.all(uploadedUrls.map(url => db.collection(category).add({ name, imageUrl: url, tags, featured, featuredOrder: featured ? Date.now() : 999999999, views: 0, enquiries: 0, createdAt: Date.now() })));
                 } else {
                     const finalImageUrl = document.getElementById('item-url').value;
                     if(!finalImageUrl) { alert("Enter an image URL."); btnAdd.disabled = false; return; }
                     btnAdd.innerText = "Syncing Database...";
-                    await db.collection(category).add({ name, imageUrl: finalImageUrl, createdAt: Date.now() });
+                    await db.collection(category).add({ name, imageUrl: finalImageUrl, tags, featured, featuredOrder: featured ? Date.now() : 999999999, views: 0, enquiries: 0, createdAt: Date.now() });
                 }
 
                 alert("Blueprint Deployed Successfully!");
@@ -235,30 +266,157 @@
             }
         });
 
-        // Live List & Delete
+        // Live List, search, sorting, edit and delete
         let unsubscribeLiveList;
-        function loadManageItems(category) {
-            if(unsubscribeLiveList) unsubscribeLiveList(); 
-            unsubscribeLiveList = db.collection(category).onSnapshot((snapshot) => {
-                itemsList.innerHTML = "";
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    itemsList.innerHTML += `
-                        <div class="item-row">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <img src="${data.imageUrl}" alt="thumb">
-                                <span style="font-weight: 500;">${data.name}</span>
-                            </div>
-                            <button class="delete-btn" data-id="${doc.id}">Delete</button>
-                        </div>`;
+        let managedItems = [];
+        const adminSearch = document.getElementById('admin-search');
+        const adminSort = document.getElementById('admin-sort');
+        const adminCount = document.getElementById('admin-count');
+        let manageItems = [];
+
+        function getCreatedTime(item) {
+            if (!item.createdAt) return 0;
+            if (typeof item.createdAt.toMillis === 'function') return item.createdAt.toMillis();
+            if (typeof item.createdAt === 'number') return item.createdAt;
+            return Date.parse(item.createdAt) || 0;
+        }
+
+        function escapeHtml(value = "") {
+            return String(value).replace(/[&<>"']/g, char => ({
+                '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+            }[char]));
+        }
+
+        function renderManageItems() {
+            const query = (adminSearch?.value || '').trim().toLowerCase();
+            const sort = adminSort?.value || 'newest';
+            const featuredFilter = document.getElementById('admin-featured-filter')?.value || 'all';
+            let filtered = [...manageItems].filter(item => {
+                const name = String(item.name || '').toLowerCase();
+                const tags = Array.isArray(item.tags) ? item.tags : String(item.tags || '').split(',').map(t=>t.trim()).filter(Boolean);
+                if (query && !name.includes(query) && !tags.some(t => t.toLowerCase().includes(query))) return false;
+                if (featuredFilter === 'featured' && !item.featured) return false;
+                if (featuredFilter === 'regular' && item.featured) return false;
+                return true;
+            });
+            filtered.sort((a,b) => {
+                if (sort === 'featured') {
+                    if (Boolean(b.featured) !== Boolean(a.featured)) return b.featured ? 1 : -1;
+                    return Number(a.featuredOrder ?? 999999999) - Number(b.featuredOrder ?? 999999999) || getCreatedTime(b)-getCreatedTime(a);
+                }
+                if (sort === 'manual') return Number(a.featuredOrder ?? 999999999) - Number(b.featuredOrder ?? 999999999);
+                if (sort === 'oldest') return getCreatedTime(a)-getCreatedTime(b);
+                if (sort === 'name') return String(a.name||'').localeCompare(String(b.name||''));
+                return getCreatedTime(b)-getCreatedTime(a);
+            });
+            if (adminCount) adminCount.textContent = `${filtered.length} item${filtered.length===1?'':'s'}`;
+            itemsList.innerHTML = '';
+            if (!filtered.length) { itemsList.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px 0;">No designs match your filters.</p>'; return; }
+            filtered.forEach(data => {
+                const row = document.createElement('div');
+                row.className = 'item-row'; row.draggable = true; row.dataset.id = data.id;
+                const tags = Array.isArray(data.tags) ? data.tags : String(data.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
+                const dateText = getCreatedTime(data) ? new Date(getCreatedTime(data)).toLocaleString() : 'Date unavailable';
+                const optimized = optimizeImageUrl(data.imageUrl || '', 300);
+                row.innerHTML = `<span class="drag-handle" title="Drag to reorder featured designs">☷</span>
+                    <img src="${escapeHtml(optimized)}" alt="">
+                    <div style="flex:1;margin-left:10px;min-width:0;">
+                        <span style="font-weight:500;display:block;">${escapeHtml(data.name||'Untitled design')} ${data.featured?'<span class="new-design-badge" style="position:static;display:inline-block;">FEATURED</span>':''}</span>
+                        <div class="admin-item-meta">Posted: ${escapeHtml(dateText)} · Views: ${Number(data.views||0)} · Enquiries: ${Number(data.enquiries||0)}</div>
+                        ${tags.length ? `<div class="admin-item-meta">Tags: ${escapeHtml(tags.join(', '))}</div>` : ''}
+                    </div>
+                    <div class="admin-row-actions"><button class="edit-btn" data-id="${escapeHtml(data.id)}">Edit</button><button class="delete-btn" data-id="${escapeHtml(data.id)}">Delete</button></div>`;
+                itemsList.appendChild(row);
+            });
+            if (sort === 'manual' || sort === 'featured') attachDragHandlers();
+        }
+        function optimizeImageUrl(url, width=1200) {
+            if (!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url;
+            return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+        }
+        function getCreatedTime(item) {
+            if (!item.createdAt) return 0;
+            if (typeof item.createdAt.toMillis === 'function') return item.createdAt.toMillis();
+            if (typeof item.createdAt === 'number') return item.createdAt;
+            return Date.parse(item.createdAt) || 0;
+        }
+        function escapeHtml(value='') { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+        function attachDragHandlers() {
+            itemsList.querySelectorAll('.item-row').forEach(row => {
+                row.addEventListener('dragstart', () => row.classList.add('dragging'));
+                row.addEventListener('dragend', async () => {
+                    row.classList.remove('dragging');
+                    itemsList.querySelectorAll('.item-row').forEach((r,i)=>r.classList.remove('drop-target'));
+                    const rows=[...itemsList.querySelectorAll('.item-row')];
+                    const featuredRows=rows.filter(r=>manageItems.find(x=>x.id===r.dataset.id)?.featured);
+                    const writes=featuredRows.map((r,i)=>db.collection(viewCategorySelect.value).doc(r.dataset.id).update({featuredOrder:i}));
+                    if (writes.length) { try { await Promise.all(writes); } catch(e) { console.warn('Order save failed',e); } }
                 });
+                row.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const dragging=itemsList.querySelector('.dragging');
+                    if (dragging && dragging!==row) {
+                        row.classList.add('drop-target');
+                        const rect=row.getBoundingClientRect();
+                        if(e.clientY < rect.top+rect.height/2) row.before(dragging); else row.after(dragging);
+                    }
+                });
+                row.addEventListener('dragleave',()=>row.classList.remove('drop-target'));
             });
         }
+
+        function loadManageItems(category) {
+            if (unsubscribeLiveList) unsubscribeLiveList();
+            unsubscribeLiveList = db.collection(category).onSnapshot((snapshot) => {
+                manageItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderManageItems();
+                refreshStats();
+            }, (error) => {
+                itemsList.innerHTML = '<p style="color:#ff4d4d;text-align:center;padding:20px 0;">Unable to load designs.</p>';
+            });
+        }
+
+        async function refreshStats() {
+            const collections = ['gates','windows','doors','staircases','balustrades','furniture'];
+            try {
+                const snaps = await Promise.all(collections.map(c => db.collection(c).get()));
+                const all = snaps.flatMap(s => s.docs.map(d => d.data()));
+                const uniqueTags = new Set(all.flatMap(x => Array.isArray(x.tags) ? x.tags : String(x.tags||'').split(',').map(t=>t.trim()).filter(Boolean)));
+                const cutoff = Date.now()-30*86400000;
+                document.getElementById('stat-total').textContent = all.length;
+                document.getElementById('stat-featured').textContent = all.filter(x=>x.featured).length;
+                document.getElementById('stat-new').textContent = all.filter(x=>getCreatedTime(x)>=cutoff).length;
+                document.getElementById('stat-views').textContent = all.reduce((n,x)=>n+Number(x.views||0),0);
+                document.getElementById('stat-enquiries').textContent = all.reduce((n,x)=>n+Number(x.enquiries||0),0);
+                document.getElementById('stat-tags').textContent = uniqueTags.size;
+            } catch(e) { console.warn('Stats unavailable',e); }
+        }
+
         viewCategorySelect.addEventListener('change', (e) => loadManageItems(e.target.value));
+        if (adminSearch) adminSearch.addEventListener('input', renderManageItems);
+        if (adminSort) adminSort.addEventListener('change', renderManageItems);
+        const adminFeaturedFilter = document.getElementById('admin-featured-filter');
+        if (adminFeaturedFilter) adminFeaturedFilter.addEventListener('change', renderManageItems);
 
         itemsList.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            if (!id) return;
+
             if(e.target.classList.contains('delete-btn') && confirm("Delete this blueprint from the server permanently?")) {
-                await db.collection(viewCategorySelect.value).doc(e.target.getAttribute('data-id')).delete();
+                await db.collection(viewCategorySelect.value).doc(id).delete();
+            }
+
+            if(e.target.classList.contains('edit-btn')) {
+                const current = managedItems.find(item => item.id === id);
+                if (!current) return;
+                const newName = prompt("Enter the new design name:", current.name || "");
+                if (newName === null) return;
+                const trimmed = newName.trim();
+                if (!trimmed) {
+                    alert("Design name cannot be empty.");
+                    return;
+                }
+                await db.collection(viewCategorySelect.value).doc(id).update({ name: trimmed });
             }
         });
     </script>

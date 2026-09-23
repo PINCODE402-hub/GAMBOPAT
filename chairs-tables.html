@@ -42,6 +42,23 @@
             <p>Durable, bespoke metal chairs, tables, and custom furnishings.</p>
         </section>
 
+        <div class="gallery-tools" aria-label="Gallery filters">
+            <input type="search" id="gallery-search" placeholder="Search designs..." aria-label="Search designs">
+            <select id="gallery-sort" aria-label="Sort designs">
+                <option value="newest">Newest first</option>
+                <option value="featured">Featured first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="name">Name A–Z</option>
+            </select>
+            <select id="gallery-date" aria-label="Filter by date">
+                <option value="all">All dates</option>
+                <option value="today">Added today</option>
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+            </select>
+            <select id="gallery-tag" aria-label="Filter by tag"><option value="all">All tags</option></select>
+            <span class="gallery-count" id="gallery-count"></span>
+        </div>
         <section class="gallery" id="dynamic-gallery">
             <p style="text-align: center; width: 100%; color: var(--text-muted); grid-column: 1 / -1;">Connecting to workshop showroom...</p>
         </section>
@@ -83,6 +100,8 @@
 
             document.body.addEventListener('click', (e) => {
                 if (e.target.classList.contains('product-img')) {
+                    const cardId = e.target.closest('.gallery-card-wrap')?.dataset.id;
+                    if (cardId) updateDoc(doc(db, "furniture", cardId), { views: increment(1) }).catch(()=>{});
                     imageViewer.style.display = "flex";
                     fullImage.src = e.target.src;
                     fullImage.style.transform = "scale(1)";
@@ -112,7 +131,7 @@
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-            import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+            import { getFirestore, collection, onSnapshot, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
             const firebaseConfig = {
                 apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA",
@@ -120,40 +139,128 @@
                 projectId: "gambopat-327be",
                 storageBucket: "gambopat-327be.firebasestorage.app",
                 messagingSenderId: "334515883953",
-                appId: "1:334515883953:web:3cd35ada86b25770a53790"
+                appId: "1:334515883953:web:3cd35ada86b25770a53790",
+                measurementId: "G-Y9RG1NKHYF"
             };
-            
+
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             const galleryContainer = document.getElementById('dynamic-gallery');
+            const searchInput = document.getElementById('gallery-search');
+            const sortSelect = document.getElementById('gallery-sort');
+            const dateSelect = document.getElementById('gallery-date');
+            const tagSelect = document.getElementById('gallery-tag');
+            const countLabel = document.getElementById('gallery-count');
+            let allItems = [];
 
-            // Targeting "furniture" collection
-            onSnapshot(collection(db, "furniture"), (snapshot) => {
+            function getCreatedTime(item) {
+                if (!item.createdAt) return 0;
+                if (typeof item.createdAt.toMillis === 'function') return item.createdAt.toMillis();
+                if (typeof item.createdAt === 'number') return item.createdAt;
+                return Date.parse(item.createdAt) || 0;
+            }
+
+            function escapeHtml(value = "") {
+                return String(value).replace(/[&<>"']/g, char => ({
+                    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+                }[char]));
+            }
+
+            function optimizeImageUrl(url, width = 1200) {
+                if (!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url;
+                return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+            }
+            function getTags(item) {
+                return Array.isArray(item.tags) ? item.tags : String(item.tags || '').split(',').map(t=>t.trim()).filter(Boolean);
+            }
+            function populateTags() {
+                if (!tagSelect) return;
+                const tags = [...new Set(allItems.flatMap(getTags))].sort((a,b)=>a.localeCompare(b));
+                const current = tagSelect.value;
+                tagSelect.innerHTML = '<option value="all">All tags</option>' + tags.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+                if (tags.includes(current)) tagSelect.value = current;
+            }
+
+            function renderGallery() {
                 if (!galleryContainer) return;
-                galleryContainer.innerHTML = ""; 
-                
-                if(snapshot.empty) {
-                    galleryContainer.innerHTML = "<p style='color:var(--text-muted); text-align:center; grid-column: 1 / -1;'>No designs uploaded to this category yet.</p>";
+                const query = (searchInput?.value || "").trim().toLowerCase();
+                const dateFilter = dateSelect?.value || "all";
+                const sort = sortSelect?.value || "newest";
+                const tag = tagSelect?.value || "all";
+                const now = Date.now();
+
+                let filtered = allItems.filter(item => {
+                    const name = String(item.name || "").toLowerCase();
+                    if (query && !name.includes(query)) return false;
+                    if (tag !== 'all' && !getTags(item).includes(tag)) return false;
+                    const created = getCreatedTime(item);
+                    if (dateFilter !== "all") {
+                        const days = dateFilter === "today" ? 1 : Number(dateFilter);
+                        const cutoff = dateFilter === "today"
+                            ? new Date().setHours(0,0,0,0)
+                            : now - days * 86400000;
+                        if (!created || created < cutoff) return false;
+                    }
+                    return true;
+                });
+
+                filtered.sort((a,b) => {
+                    if (sort === "featured") {
+                        const af = a.featured ? 1 : 0, bf = b.featured ? 1 : 0;
+                        if (bf !== af) return bf - af;
+                        const ao = Number(a.featuredOrder ?? 999999999), bo = Number(b.featuredOrder ?? 999999999);
+                        if (ao !== bo) return ao - bo;
+                        return getCreatedTime(b) - getCreatedTime(a);
+                    }
+                    if (sort === "oldest") return getCreatedTime(a) - getCreatedTime(b);
+                    if (sort === "name") return String(a.name || "").localeCompare(String(b.name || ""));
+                    return getCreatedTime(b) - getCreatedTime(a);
+                });
+
+                galleryContainer.innerHTML = "";
+                if (countLabel) countLabel.textContent = `${filtered.length} design${filtered.length === 1 ? "" : "s"}`;
+
+                if (!filtered.length) {
+                    galleryContainer.innerHTML = "<p style='color:var(--text-muted); text-align:center; grid-column:1 / -1;'>No designs match your filters.</p>";
                     return;
                 }
 
-                snapshot.forEach((doc) => {
-                    const item = doc.data();
-                    const safeName = item.name.replace(/'/g, "\\'");
-                    
+                const sevenDaysAgo = now - 7 * 86400000;
+                filtered.forEach(item => {
                     const card = document.createElement('div');
-                    card.className = 'card';
+                    card.className = 'card gallery-card-wrap';
+                    card.dataset.id = item.id;
+                    const created = getCreatedTime(item);
+                    const isNew = created >= sevenDaysAgo;
+                    const tags = getTags(item);
+                    const optimizedUrl = optimizeImageUrl(item.imageUrl || '');
+                    const safeName = String(item.name || "Design").replace(/'/g, "\\'");
                     card.innerHTML = `
-                        <img src="${item.imageUrl}" class="product-img" alt="${item.name}">
+                        ${isNew ? '<span class="new-design-badge">NEW</span>' : ''}
+                        ${item.featured ? '<span class="featured-badge">FEATURED</span>' : ''}
+                        <img src="${escapeHtml(optimizedUrl)}" class="product-img" alt="${escapeHtml(item.name || 'Design')}">
                         <div class="info">
-                            <p>${item.name}</p>
-                            <button class="order-btn" data-name="${safeName}" data-url="${item.imageUrl}">
+                            <p>${escapeHtml(item.name || 'Untitled design')}</p>
+                            ${tags.length ? `<div>${tags.slice(0,4).map(t=>`<span class=\"tag-chip\">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+                            <button class="order-btn" data-name="${escapeHtml(safeName)}" data-url="${escapeHtml(item.imageUrl || '')}">
                                 Enquire Now
                             </button>
-                        </div>
-                    `;
+                        </div>`;
                     galleryContainer.appendChild(card);
                 });
+            }
+
+            onSnapshot(collection(db, "furniture"), (snapshot) => {
+                allItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                populateTags();
+                renderGallery();
+            }, (error) => {
+                galleryContainer.innerHTML = "<p style='color:#ff4d4d; text-align:center; grid-column:1 / -1;'>Error syncing with server.</p>";
+            });
+
+            [searchInput, sortSelect, dateSelect, tagSelect].forEach(control => {
+                if (control) control.addEventListener('input', renderGallery);
+                if (control && control.tagName === 'SELECT') control.addEventListener('change', renderGallery);
             });
 
             if (galleryContainer) {
@@ -161,9 +268,11 @@
                     if (e.target.classList.contains('order-btn')) {
                         const name = e.target.getAttribute('data-name');
                         const url = e.target.getAttribute('data-url');
-                        let phone = "233243265708";
-                        let msg = `Hello Gambopat Engineering! I am interested in this design: ${name}. Reference: ${url}`;
-                        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+                        const id = e.target.closest('.gallery-card-wrap')?.dataset.id;
+                        if (id) updateDoc(doc(db, "furniture", id), { enquiries: increment(1) }).catch(()=>{});
+                        const phoneNumber = "233243265708";
+                        const message = `Hello Gambopat Engineering! I am interested in this design: ${name}. Reference: ${url}`;
+                        window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
                     }
                 });
             }
