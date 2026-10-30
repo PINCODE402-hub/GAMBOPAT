@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>About Us & FAQ | Gambopat Engineering & Training Center</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="About Gambopat Engineering & Training Center in Ashaiman, Ghana: our process, materials, location and frequently asked questions.">
+        <link rel="canonical" href="https://gambopat.com/about.html">
+        <meta property="og:title" content="About Us & FAQ | Gambopat Engineering & Training Center">
+        <meta property="og:description" content="About Gambopat Engineering & Training Center in Ashaiman, Ghana: our process, materials, location and frequently asked questions.">
+        <meta property="og:url" content="https://www.gambopat.com/about.html">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://www.gambopat.com/web-app-manifest-512x512.png">
+        <link rel="icon" href="favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <div class="hed-f">
+                <img src="favicon-96x96.png" alt="Gambopat Logo">
+                <span class="gg">GAMBOPAT</span>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav-links" class="nav">
+                <a href="index.html">Home</a>
+                <a href="main-gates.html">Gates</a>
+                <a href="window.html">Windows</a>
+                <a href="security-door.html">Doors</a>
+                <a href="staircase.html">Staircase</a>
+                <a href="balustrades.html">Balustrades</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="training.html">Training</a>
+                <a href="about.html" style="color: var(--gold);">About</a>
+                <a href="quote.html">Get a Quote</a>
+                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+            </nav>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <div class="settings-menu" id="settingsMenu">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="lightMode" onchange="toggleLightMode()"> Light Mode
+                </label>
+                <button class="close-settings" onclick="toggleSettings()" style="margin-top: 10px; width: 100%; padding: 8px; background: var(--gold); border: none; color: #111; font-weight: bold; border-radius: 5px;">Apply</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h2>About Gambopat</h2>
+            <p>Where all metals surrender. Crafted to last.</p>
+        </section>
+
+        <section class="page-wrap">
+            <h3>Who we are</h3>
+            <p>Gambopat Engineering &amp; Training Center specialises in precision light welding that combines quality, efficiency and innovation. From custom fabrication and repairs to industrial projects, our skilled engineers deliver work you can rely on. We also train the next generation through hands-on apprenticeships.</p>
+            <h3>How it works</h3>
+            <div class="info-grid">
+                <div class="info-card"><div class="num">1</div><h4>Enquire</h4><p>Send a photo, a design from our gallery or your measurements.</p></div>
+                <div class="info-card"><div class="num">2</div><h4>Quote</h4><p>We confirm the design, size and give you a quotation.</p></div>
+                <div class="info-card"><div class="num">3</div><h4>Fabricate</h4><p>Built in our workshop from galvanised metal and mild steel.</p></div>
+                <div class="info-card"><div class="num">4</div><h4>Deliver</h4><p>Delivery and installation arranged to your location.</p></div>
+            </div>
+            <h3>Visit our workshop</h3>
+            <p>Ashaiman, Zenu, Peaceland, Falcon Academy. <a href="https://maps.app.goo.gl/LDmtNmfUc1ethCu28" target="_blank" rel="noopener" style="color:var(--gold)">Open in Google Maps</a> or call <a href="tel:+233243265708" style="color:var(--gold)">+233243265708</a>.</p>
+            <iframe class="map-embed" loading="lazy" title="Gambopat workshop location" src="https://maps.google.com/maps?q=Falcon%20Academy%20Zenu%20Peaceland%20Ashaiman%20Ghana&output=embed"></iframe>
+            <h3>Frequently asked questions</h3>
+            <div class="info-card"><h4>How do I get a price?</h4><p>Send photos or measurements on WhatsApp or use the <a href="quote.html" style="color:var(--gold)">quote form</a>.</p></div><br>
+            <div class="info-card"><h4>Do you deliver and install?</h4><p>Yes. Tell us your location and we will confirm.</p></div><br>
+            <div class="info-card"><h4>Can you copy a design I saw elsewhere?</h4><p>Yes. Send a photo and we will fabricate something similar to your measurements.</p></div><br>
+            <div class="info-card"><h4>What materials do you use?</h4><p>High-grade galvanised metals and mild steel for durability and rust resistance.</p></div>
+        </section>
+
+        <footer>
+            <p>© 2026 Gambopat Engineering &amp; Training Center | <a href="index.html" style="color:var(--gold);text-decoration:none">Home</a></p>
+        </footer>
+
+        <script>
+            function toggleMenu() { document.getElementById("nav-links").classList.toggle("show"); }
+            function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('active'); }
+            function toggleLightMode() {
+                document.body.classList.toggle('light-theme');
+                localStorage.setItem('lightTheme', document.body.classList.contains('light-theme'));
+            }
+            window.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem('lightTheme') === 'true') {
+                    document.body.classList.add('light-theme');
+                    const c = document.getElementById('lightMode'); if (c) c.checked = true;
+                }
+            });
+            function sendWA(lines) {
+                window.open("https://wa.me/233243265708?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+            }
+            
+        </script>
+        <script src="site-extras.js" defer></script>
+    </body>
+</html>

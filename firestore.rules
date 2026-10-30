@@ -1,0 +1,14 @@
+rules_version = '2';
+// Paste into Firebase Console > Firestore > Rules, then Publish.
+// Public can read designs and ONLY bump the views/enquiries counters by 1.
+// Only a signed-in admin can create, edit or delete designs.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{collection}/{docId} {
+      allow read: if true;
+      allow create, delete: if request.auth != null;
+      allow update: if request.auth != null
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views','enquiries']);
+    }
+  }
+}

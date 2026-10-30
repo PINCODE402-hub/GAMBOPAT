@@ -4,7 +4,15 @@
         <meta charset="UTF-8">
         <title>Security Doors | Gambopat Engineering</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="favicon-32x32.png">
+        <link rel="icon" type="image/png" href="favicon-96x96.png">
+        <meta name="description" content="Strong security doors and steel doors made in Ashaiman, Ghana. Custom designs from Gambopat Engineering & Training Center.">
+        <link rel="canonical" href="https://gambopat.com/security-door.html">
+        <meta property="og:title" content="Security Doors | Gambopat Engineering">
+        <meta property="og:description" content="Strong security doors and steel doors made in Ashaiman, Ghana. Custom designs from Gambopat Engineering & Training Center.">
+        <meta property="og:url" content="https://www.gambopat.com/security-door.html">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://www.gambopat.com/web-app-manifest-512x512.png">
+        <link rel="icon" href="favicon.ico" sizes="any">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
@@ -23,8 +31,10 @@
                 <a href="security-door.html" style="color: var(--gold);">Doors</a>
                 <a href="balustrades.html">Balustrades</a>
                 <a href="chairs-tables.html">Furniture</a>
-                <a href="admin.html" style="color: var(--text-muted); font-size: 0.8rem;">Admin</a>
-                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+                <a href="training.html">Training</a>
+                <a href="about.html">About</a>
+                <a href="quote.html">Get a Quote</a>
+                                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
             </nav>
 
             <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
@@ -67,6 +77,12 @@
             <span class="close-btn" onclick="closeViewer()">×</span>
             <img id="fullImage" alt="Expanded door view">
         </div>
+
+        <section class="seo-blurb">
+            <h3>Security Doors by Gambopat Engineering</h3>
+            <p>Our security doors are fabricated from high-grade galvanised and mild steel for strength and long-lasting protection. See current designs above, then message us for a quote.</p>
+            <p>Not sure what you need? <a href="quote.html" style="color:var(--gold)">Request a quote</a> or learn <a href="about.html" style="color:var(--gold)">how we work</a>.</p>
+        </section>
 
         <section class="cta-section">
             <h2 style="margin-bottom: 10px;">Secure Your Property</h2>
@@ -238,7 +254,7 @@
                     card.innerHTML = `
                         ${isNew ? '<span class="new-design-badge">NEW</span>' : ''}
                         ${item.featured ? '<span class="featured-badge">FEATURED</span>' : ''}
-                        <img src="${escapeHtml(optimizedUrl)}" class="product-img" alt="${escapeHtml(item.name || 'Design')}">
+                        <img loading="lazy" src="${escapeHtml(optimizedUrl)}" class="product-img" alt="${escapeHtml(item.name || 'Design')}">
                         <div class="info">
                             <p>${escapeHtml(item.name || 'Untitled design')}</p>
                             ${tags.length ? `<div>${tags.slice(0,4).map(t=>`<span class=\"tag-chip\">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
@@ -277,5 +293,6 @@
                 });
             }
         </script>
+    <script src="site-extras.js" defer></script>
     </body>
 </html>

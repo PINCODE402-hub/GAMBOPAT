@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Request a Quote | Gambopat Engineering & Training Center</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Request a quotation for gates, doors, windows, staircases, balustrades and metal furniture from Gambopat Engineering in Ashaiman, Ghana.">
+        <link rel="canonical" href="https://gambopat.com/quote.html">
+        <meta property="og:title" content="Request a Quote | Gambopat Engineering & Training Center">
+        <meta property="og:description" content="Request a quotation for gates, doors, windows, staircases, balustrades and metal furniture from Gambopat Engineering in Ashaiman, Ghana.">
+        <meta property="og:url" content="https://www.gambopat.com/quote.html">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://www.gambopat.com/web-app-manifest-512x512.png">
+        <link rel="icon" href="favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <div class="hed-f">
+                <img src="favicon-96x96.png" alt="Gambopat Logo">
+                <span class="gg">GAMBOPAT</span>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav-links" class="nav">
+                <a href="index.html">Home</a>
+                <a href="main-gates.html">Gates</a>
+                <a href="window.html">Windows</a>
+                <a href="security-door.html">Doors</a>
+                <a href="staircase.html">Staircase</a>
+                <a href="balustrades.html">Balustrades</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="training.html">Training</a>
+                <a href="about.html">About</a>
+                <a href="quote.html" style="color: var(--gold);">Get a Quote</a>
+                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+            </nav>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <div class="settings-menu" id="settingsMenu">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="lightMode" onchange="toggleLightMode()"> Light Mode
+                </label>
+                <button class="close-settings" onclick="toggleSettings()" style="margin-top: 10px; width: 100%; padding: 8px; background: var(--gold); border: none; color: #111; font-weight: bold; border-radius: 5px;">Apply</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h2>Request a Quote</h2>
+            <p>Tell us what you need and we will continue on WhatsApp.</p>
+        </section>
+
+        <section class="page-wrap">
+            <div class="form-box">
+                <label for="q-name">Your name</label><input id="q-name" type="text" autocomplete="name">
+                <label for="q-phone">Phone number</label><input id="q-phone" type="tel" autocomplete="tel">
+                <label for="q-type">What do you need?</label>
+                <select id="q-type">
+                    <option>Main Gate</option><option>Security Door</option><option>Windows</option>
+                    <option>Staircase</option><option>Balustrade / Handrail</option><option>Furniture</option>
+                    <option>Repair work</option><option>Custom fabrication</option>
+                </select>
+                <label for="q-size">Size / measurements (if known)</label><input id="q-size" type="text" placeholder="e.g. 12ft wide">
+                <label for="q-loc">Project location</label><input id="q-loc" type="text" placeholder="Town / area">
+                <label for="q-notes">Other details</label><textarea id="q-notes" rows="3"></textarea>
+                <button onclick="submitQuote()">Send on WhatsApp</button>
+                <p style="font-size:.8rem;margin-top:10px;text-align:center">You can attach photos in WhatsApp after the chat opens.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 Gambopat Engineering &amp; Training Center | <a href="index.html" style="color:var(--gold);text-decoration:none">Home</a></p>
+        </footer>
+
+        <script>
+            function toggleMenu() { document.getElementById("nav-links").classList.toggle("show"); }
+            function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('active'); }
+            function toggleLightMode() {
+                document.body.classList.toggle('light-theme');
+                localStorage.setItem('lightTheme', document.body.classList.contains('light-theme'));
+            }
+            window.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem('lightTheme') === 'true') {
+                    document.body.classList.add('light-theme');
+                    const c = document.getElementById('lightMode'); if (c) c.checked = true;
+                }
+            });
+            function sendWA(lines) {
+                window.open("https://wa.me/233243265708?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+            }
+            function submitQuote(){
+                const v=id=>document.getElementById(id).value.trim();
+                if(!v('q-name')||!v('q-phone')){alert('Please enter your name and phone number.');return;}
+                sendWA(['Hello Gambopat Engineering! I would like a quotation.','Name: '+v('q-name'),'Phone: '+v('q-phone'),'Project: '+v('q-type'),'Size: '+(v('q-size')||'Not sure yet'),'Location: '+(v('q-loc')||'-'),'Details: '+(v('q-notes')||'-')]);
+            }
+        </script>
+        <script src="site-extras.js" defer></script>
+    </body>
+</html>

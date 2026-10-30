@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Welding Training & Apprenticeship in Ashaiman | Gambopat</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Learn welding and metal fabrication through hands-on apprenticeship training at Gambopat Engineering & Training Center, Ashaiman, Ghana.">
+        <link rel="canonical" href="https://gambopat.com/training.html">
+        <meta property="og:title" content="Welding Training & Apprenticeship in Ashaiman | Gambopat">
+        <meta property="og:description" content="Learn welding and metal fabrication through hands-on apprenticeship training at Gambopat Engineering & Training Center, Ashaiman, Ghana.">
+        <meta property="og:url" content="https://www.gambopat.com/training.html">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://www.gambopat.com/web-app-manifest-512x512.png">
+        <link rel="icon" href="favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <div class="hed-f">
+                <img src="favicon-96x96.png" alt="Gambopat Logo">
+                <span class="gg">GAMBOPAT</span>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav-links" class="nav">
+                <a href="index.html">Home</a>
+                <a href="main-gates.html">Gates</a>
+                <a href="window.html">Windows</a>
+                <a href="security-door.html">Doors</a>
+                <a href="staircase.html">Staircase</a>
+                <a href="balustrades.html">Balustrades</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="training.html" style="color: var(--gold);">Training</a>
+                <a href="about.html">About</a>
+                <a href="quote.html">Get a Quote</a>
+                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+            </nav>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <div class="settings-menu" id="settingsMenu">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="lightMode" onchange="toggleLightMode()"> Light Mode
+                </label>
+                <button class="close-settings" onclick="toggleSettings()" style="margin-top: 10px; width: 100%; padding: 8px; background: var(--gold); border: none; color: #111; font-weight: bold; border-radius: 5px;">Apply</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h2>Training &amp; Apprenticeship</h2>
+            <p>Hands-on welding and fabrication training, designed to turn skills into mastery.</p>
+        </section>
+
+        <section class="page-wrap">
+            <h3>What you will learn</h3>
+            <div class="info-grid">
+                <div class="info-card"><h4>Welding fundamentals</h4><p>Workshop safety, equipment handling and clean, strong welds.</p></div>
+                <div class="info-card"><h4>Fabrication</h4><p>Gates, doors, windows, staircases, balustrades and furniture.</p></div>
+                <div class="info-card"><h4>Real projects</h4><p>Train on real customer work in a working workshop.</p></div>
+                <div class="info-card"><h4>Business skills</h4><p>Measuring, costing jobs and dealing with customers.</p></div>
+            </div>
+            <h3>Details</h3>
+            <p>Duration, fees and the next intake date are confirmed directly with our team, so you always get current information. Beginners are welcome.</p>
+            <h3>Apply</h3>
+            <div class="form-box">
+                <label for="t-name">Your name</label><input id="t-name" type="text" autocomplete="name">
+                <label for="t-phone">Phone number</label><input id="t-phone" type="tel" autocomplete="tel">
+                <label for="t-exp">Experience level</label>
+                <select id="t-exp"><option>Complete beginner</option><option>Some experience</option><option>Experienced, want certification or polish</option></select>
+                <label for="t-notes">Anything we should know?</label><textarea id="t-notes" rows="3"></textarea>
+                <button onclick="applyTraining()">Apply on WhatsApp</button>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 Gambopat Engineering &amp; Training Center | <a href="index.html" style="color:var(--gold);text-decoration:none">Home</a></p>
+        </footer>
+
+        <script>
+            function toggleMenu() { document.getElementById("nav-links").classList.toggle("show"); }
+            function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('active'); }
+            function toggleLightMode() {
+                document.body.classList.toggle('light-theme');
+                localStorage.setItem('lightTheme', document.body.classList.contains('light-theme'));
+            }
+            window.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem('lightTheme') === 'true') {
+                    document.body.classList.add('light-theme');
+                    const c = document.getElementById('lightMode'); if (c) c.checked = true;
+                }
+            });
+            function sendWA(lines) {
+                window.open("https://wa.me/233243265708?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+            }
+            function applyTraining(){
+                const v=id=>document.getElementById(id).value.trim();
+                if(!v('t-name')||!v('t-phone')){alert('Please enter your name and phone number.');return;}
+                sendWA(['Hello Gambopat! I would like to apply for the welding apprenticeship.','Name: '+v('t-name'),'Phone: '+v('t-phone'),'Experience: '+v('t-exp'),'Notes: '+(v('t-notes')||'-')]);
+            }
+        </script>
+        <script src="site-extras.js" defer></script>
+    </body>
+</html>

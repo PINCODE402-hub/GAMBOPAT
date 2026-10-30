@@ -24,6 +24,9 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <link rel="manifest" href="site.webmanifest">
         
+        <script type="application/ld+json">
+        {"@context":"https://schema.org","@type":"LocalBusiness","name":"Gambopat Engineering & Training Center","url":"https://www.gambopat.com","telephone":"+233243265708","image":"https://www.gambopat.com/web-app-manifest-512x512.png","description":"Welding, metal fabrication and apprenticeship training in Ashaiman, Ghana.","address":{"@type":"PostalAddress","streetAddress":"Zenu, Peaceland, Falcon Academy","addressLocality":"Ashaiman","addressCountry":"GH"},"areaServed":"Greater Accra, Ghana","hasMap":"https://maps.app.goo.gl/LDmtNmfUc1ethCu28","makesOffer":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Main gates fabrication"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Security doors and windows"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Staircases and balustrades"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Metal furniture"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Welding apprenticeship training"}}]}
+        </script>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
@@ -41,7 +44,9 @@
                 <a href="staircase.html">Staircase</a>
                 <a href="balustrades.html">Balustrades</a>
                 <a href="chairs-tables.html">Furniture</a>
-                <a href="admin.html" style="color: var(--text-muted); font-size: 0.8rem;">Admin</a> 
+                <a href="training.html">Training</a>
+                <a href="about.html">About</a>
+                <a href="quote.html">Get a Quote</a>
                 <a href="https://wa.me/233243265708" class="cta">Chat Now</a>
             </nav>
             <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
@@ -96,6 +101,8 @@
                 <div class="accordion-content">
                     We are strategically located at <strong><a style="color: var(--gold); text-decoration: none;" href="https://maps.app.goo.gl/LDmtNmfUc1ethCu28" target="_blank">Ashaiman, Zenu, Peaceland, Falcon Academy</a></strong>.<br><br>
                     We primarily forge with high-grade Galvanised Metals and Mild Steel to ensure maximum durability and rust resistance across all weather conditions.
+                    <iframe class="map-embed" loading="lazy" title="Gambopat workshop location" src="https://maps.google.com/maps?q=Falcon%20Academy%20Zenu%20Peaceland%20Ashaiman%20Ghana&output=embed"></iframe>
+                    <br><a href="tel:+233243265708" style="color:var(--gold)">Call: +233243265708</a>
                 </div>
             </div>
 
@@ -111,6 +118,50 @@
                     <a href="tel:+233243265708" style="color: var(--text-main); text-decoration: none;">Or Call: +233243265708</a>
                 </div>
             </div>
+            <div class="accordion-box">
+                <div class="accordion-header">
+                    <span>OUR SERVICES</span>
+                    <span class="indicator">➕</span>
+                </div>
+                <div class="accordion-content">
+                    Main gates, security doors, windows, staircases, balustrades, metal furniture, repairs and custom fabrication for homes and businesses in Ashaiman and across Greater Accra.<br><br><a href="quote.html" class="btn-gold">Request a Quote</a>
+                </div>
+            </div>
+
+            <div class="accordion-box">
+                <div class="accordion-header">
+                    <span>TRAINING &amp; APPRENTICESHIP</span>
+                    <span class="indicator">➕</span>
+                </div>
+                <div class="accordion-content">
+                    Learn welding and metal fabrication hands-on in our workshop and turn your skill into a career.<br><br><a href="training.html" class="btn-gold">See Training Details</a>
+                </div>
+            </div>
+
+            <div class="accordion-box">
+                <div class="accordion-header">
+                    <span>HOW IT WORKS</span>
+                    <span class="indicator">➕</span>
+                </div>
+                <div class="accordion-content">
+                    <strong>1.</strong> Enquire with a photo or measurements &nbsp; <strong>2.</strong> Get a quotation &nbsp; <strong>3.</strong> We fabricate &nbsp; <strong>4.</strong> Delivery and installation.<br><br><a href="about.html" style="color:var(--gold)">More about our process</a>
+                </div>
+            </div>
+
+            <div class="accordion-box">
+                <div class="accordion-header">
+                    <span>FREQUENTLY ASKED QUESTIONS</span>
+                    <span class="indicator">➕</span>
+                </div>
+                <div class="accordion-content">
+                    <p><strong>How do I get a price?</strong><br>Send photos or measurements on WhatsApp or use our <a href="quote.html" style="color:var(--gold)">quote form</a>. We reply with a quotation after confirming the design and size.</p><br>
+                    <p><strong>Do you deliver and install?</strong><br>Yes, tell us your location in the quote request and we will confirm delivery and installation.</p><br>
+                    <p><strong>Can you copy a design I saw somewhere?</strong><br>Yes. Send us a photo and we will fabricate something similar to your measurements.</p><br>
+                    <p><strong>What materials do you use?</strong><br>High-grade galvanised metals and mild steel, chosen for durability and rust resistance.</p><br>
+                    <p><strong>Do you train beginners?</strong><br>Yes. See our <a href="training.html" style="color:var(--gold)">training and apprenticeship page</a>.</p>
+                </div>
+            </div>
+
         </section>
 
         <div class="image-viewer" id="previewImageViewer">
@@ -236,7 +287,7 @@
 
                         designCard.innerHTML = `
                             <div style="overflow: hidden;">
-                                <img src="${displayUrl}" class="product-img launch-home-viewer" alt="${fileData.name || 'Design'}">
+                                <img loading="lazy" src="${displayUrl}" class="product-img launch-home-viewer" alt="${fileData.name || 'Design'}">
                             </div>
                             <div class="card-info">
                                 <p>${fileData.name || 'Untitled design'}</p>
@@ -312,5 +363,6 @@
                 });
             });
         </script>
+    <script src="site-extras.js" defer></script>
     </body>
 </html>
