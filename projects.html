@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Latest Work & Projects | Gambopat Engineering</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="See the newest gates, doors, windows, staircases, balustrades and furniture from the Gambopat Engineering workshop in Ashaiman, Ghana.">
+        <link rel="canonical" href="https://gambopat.com/projects.html">
+        <meta property="og:title" content="Latest Work & Projects | Gambopat Engineering">
+        <meta property="og:description" content="See the newest gates, doors, windows, staircases, balustrades and furniture from the Gambopat Engineering workshop in Ashaiman, Ghana.">
+        <meta property="og:url" content="https://www.gambopat.com/projects.html">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://www.gambopat.com/web-app-manifest-512x512.png">
+        <link rel="icon" href="favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <div class="hed-f">
+                <img src="favicon-96x96.png" alt="Gambopat Logo">
+                <span class="gg">GAMBOPAT</span>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav-links" class="nav">
+                <a href="index.html">Home</a>
+                <a href="main-gates.html">Gates</a>
+                <a href="window.html">Windows</a>
+                <a href="security-door.html">Doors</a>
+                <a href="staircase.html">Staircase</a>
+                <a href="balustrades.html">Balustrades</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="training.html">Training</a>
+                <a href="about.html" >About</a>
+                <a href="quote.html">Get a Quote</a>
+                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+            </nav>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <div class="settings-menu" id="settingsMenu">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="lightMode" onchange="toggleLightMode()"> Light Mode
+                </label>
+                <button class="close-settings" onclick="toggleSettings()" style="margin-top: 10px; width: 100%; padding: 8px; background: var(--gold); border: none; color: #111; font-weight: bold; border-radius: 5px;">Apply</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h2>Latest Work</h2>
+            <p>Fresh from the workshop: the newest designs across every category.</p>
+        </section>
+
+        <section class="page-wrap" style="max-width:1200px">
+            <div class="category-filters" id="proj-filters"></div>
+            <div class="gallery" id="proj-grid" style="padding:20px 0"><p style="grid-column:1/-1;text-align:center;color:var(--text-muted)">Loading latest work...</p></div>
+        </section>
+        <div class="image-viewer" id="imageViewer"><span class="close-btn" onclick="closeViewer()">×</span><img id="fullImage" alt="Expanded view"></div>
+
+        <footer>
+            <p>© 2026 Gambopat Engineering &amp; Training Center | <a href="index.html" style="color:var(--gold);text-decoration:none">Home</a></p>
+        </footer>
+
+        <script>
+            function toggleMenu() { document.getElementById("nav-links").classList.toggle("show"); }
+            function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('active'); }
+            function toggleLightMode() {
+                document.body.classList.toggle('light-theme');
+                localStorage.setItem('lightTheme', document.body.classList.contains('light-theme'));
+            }
+            window.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem('lightTheme') === 'true') {
+                    document.body.classList.add('light-theme');
+                    const c = document.getElementById('lightMode'); if (c) c.checked = true;
+                }
+            });
+            function sendWA(lines) {
+                window.open("https://wa.me/233243265708?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+            }
+            
+        </script>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+            import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+            const app = initializeApp({apiKey: "AIzaSyCzbU6d1wh6sezdM1ixhQrA-TCVCHpm-AA", authDomain: "gambopat-327be.firebaseapp.com", projectId: "gambopat-327be", storageBucket: "gambopat-327be.firebasestorage.app", messagingSenderId: "334515883953", appId: "1:334515883953:web:3cd35ada86b25770a53790"});
+            const db = getFirestore(app);
+            const CATS = {gates:'Main Gates', windows:'Windows', doors:'Doors', staircases:'Staircases', balustrades:'Balustrades', furniture:'Furniture', custom:'Custom & Repairs'};
+            const esc = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+            const t = d => typeof d.createdAt?.toMillis === 'function' ? d.createdAt.toMillis() : Number(d.createdAt||0);
+            const opt = u => (u && u.includes('res.cloudinary.com') && u.includes('/upload/')) ? u.replace('/upload/','/upload/f_auto,q_auto,w_800/') : u;
+            let items = [], active = 'all';
+            const grid = document.getElementById('proj-grid'), filters = document.getElementById('proj-filters');
+            function render(){
+                const list = items.filter(i => active==='all' || i.cat===active).slice(0,24);
+                grid.innerHTML = list.length ? '' : '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted)">No designs yet.</p>';
+                list.forEach(i => {
+                    const c = document.createElement('div'); c.className = 'card';
+                    c.innerHTML = '<img loading="lazy" class="product-img" src="'+esc(opt(i.imageUrl))+'" alt="'+esc(i.name||'Design')+'"><div class="info"><p>'+esc(i.name||'Design')+'</p><span class="tag-chip">'+esc(CATS[i.cat])+'</span><br><button class="order-btn" data-name="'+esc(i.name||'Design')+'" data-url="'+esc(i.imageUrl)+'" style="margin-top:12px">Enquire Now</button></div>';
+                    grid.appendChild(c);
+                });
+            }
+            function buildFilters(){
+                filters.innerHTML = ['all',...Object.keys(CATS)].map(k => '<button class="filter-btn '+(k===active?'active-filter':'')+'" data-k="'+k+'">'+(k==='all'?'All':CATS[k])+'</button>').join('');
+            }
+            filters.addEventListener('click', e => { const k = e.target.dataset.k; if(!k) return; active = k; buildFilters(); render(); });
+            grid.addEventListener('click', e => {
+                if (e.target.classList.contains('order-btn')) {
+                    window.open('https://wa.me/233243265708?text=' + encodeURIComponent('Hello Gambopat Engineering! I am interested in this design: ' + e.target.dataset.name + '. Reference: ' + e.target.dataset.url), '_blank');
+                } else if (e.target.classList.contains('product-img')) {
+                    const v = document.getElementById('imageViewer'); document.getElementById('fullImage').src = e.target.src; v.style.display = 'flex';
+                }
+            });
+            document.getElementById('imageViewer').addEventListener('click', e => { if (e.target.id !== 'fullImage') e.currentTarget.style.display = 'none'; });
+            buildFilters();
+            Promise.all(Object.keys(CATS).map(cat => getDocs(collection(db, cat)).then(s => s.docs.map(d => ({...d.data(), cat}))).catch(() => []))).then(r => {
+                items = r.flat().filter(i => i.imageUrl).sort((a,b) => t(b)-t(a)); render();
+            });
+        </script>
+        <script src="site-extras.js" defer></script>
+    </body>
+</html>

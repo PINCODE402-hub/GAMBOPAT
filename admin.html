@@ -144,6 +144,7 @@
             <option value="staircases">Staircases</option>
             <option value="balustrades">Balustrades</option>
             <option value="furniture">Chairs & Tables</option>
+            <option value="custom">Custom & Repairs</option>
         </select>
 
         <label>Design Identifier (Name)</label>
@@ -181,6 +182,7 @@
             <option value="staircases">Staircases</option>
             <option value="balustrades">Balustrades</option>
             <option value="furniture">Chairs & Tables</option>
+            <option value="custom">Custom & Repairs</option>
         </select>
 
         <div class="gallery-tools" style="margin-top: 20px;">
@@ -421,7 +423,7 @@
         }
 
         async function refreshStats() {
-            const collections = ['gates','windows','doors','staircases','balustrades','furniture'];
+            const collections = ['gates','windows','doors','staircases','balustrades','furniture','custom'];
             try {
                 const snaps = await Promise.all(collections.map(c => db.collection(c).get()));
                 const all = snaps.flatMap(s => s.docs.map(d => d.data()));

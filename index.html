@@ -70,6 +70,7 @@
                 <button class="filter-btn" data-category="staircases">Staircases</button>
                 <button class="filter-btn" data-category="balustrades">Balustrades</button>
                 <button class="filter-btn" data-category="furniture">Furniture</button>
+                <button class="filter-btn" data-category="custom">Custom &amp; Repairs</button>
             </div>
 
             <div class="slider-container">
@@ -78,6 +79,15 @@
                     <p style="color: var(--text-muted); width: 100%; text-align: center; padding: 50px 0;">Connecting to showroom...</p>
                 </div>
                 <button class="slide-btn next-btn" onclick="slideRight()">❯</button>
+            </div>
+        </section>
+
+        <section class="content-section why-gambopat">
+            <div class="info-grid">
+                <div class="info-card"><h4>🛡️ Built to last</h4><p>Galvanised metals and mild steel for strength and rust resistance.</p></div>
+                <div class="info-card"><h4>📐 Made to measure</h4><p>Every piece is fabricated to your size and design.</p></div>
+                <div class="info-card"><h4>🎓 Training centre</h4><p>Skilled engineers who also train the next generation.</p></div>
+                <div class="info-card"><h4>💬 Easy ordering</h4><p>Pick a design, tap Enquire, and chat with us on WhatsApp.</p></div>
             </div>
         </section>
 
@@ -104,6 +114,14 @@
                     <iframe class="map-embed" loading="lazy" title="Gambopat workshop location" src="https://maps.google.com/maps?q=Falcon%20Academy%20Zenu%20Peaceland%20Ashaiman%20Ghana&output=embed"></iframe>
                     <br><a href="tel:+233243265708" style="color:var(--gold)">Call: +233243265708</a>
                 </div>
+            </div>
+
+            <div class="accordion-box" id="testimonials-box" style="display:none">
+                <div class="accordion-header">
+                    <span>WHAT CUSTOMERS SAY</span>
+                    <span class="indicator">➕</span>
+                </div>
+                <div class="accordion-content" id="testimonials"></div>
             </div>
 
             <div class="accordion-box">
@@ -285,7 +303,10 @@
                         designCard.className = 'card';
                         designCard.dataset.id = doc.id;
 
+                        const _ct = typeof fileData.createdAt?.toMillis === 'function' ? fileData.createdAt.toMillis() : Number(fileData.createdAt || 0);
+                        const _badge = fileData.featured ? '<span class="featured-badge home-badge">FEATURED</span>' : ((_ct && Date.now() - _ct < 7*86400000) ? '<span class="featured-badge home-badge" style="background:var(--accent-green);color:#fff">NEW</span>' : '');
                         designCard.innerHTML = `
+                            ${_badge}
                             <div style="overflow: hidden;">
                                 <img loading="lazy" src="${displayUrl}" class="product-img launch-home-viewer" alt="${fileData.name || 'Design'}">
                             </div>

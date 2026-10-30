@@ -117,7 +117,7 @@
             document.body.addEventListener('click', (e) => {
                 if (e.target.classList.contains('product-img')) {
                     const cardId = e.target.closest('.gallery-card-wrap')?.dataset.id;
-                    if (cardId) updateDoc(doc(db, "doors", cardId), { views: increment(1) }).catch(()=>{});
+                    try{ if (cardId && window.__gp) window.__gp.updateDoc(window.__gp.doc(window.__gp.db, "doors", cardId), { views: window.__gp.increment(1) }).catch(()=>{}); }catch(err){}
                     imageViewer.style.display = "flex";
                     fullImage.src = e.target.src;
                     fullImage.style.transform = "scale(1)";
@@ -161,6 +161,7 @@
 
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
+            window.__gp = { db, updateDoc, doc, increment };
             const galleryContainer = document.getElementById('dynamic-gallery');
             const searchInput = document.getElementById('gallery-search');
             const sortSelect = document.getElementById('gallery-sort');

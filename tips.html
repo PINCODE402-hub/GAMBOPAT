@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Metalwork Tips & Guides | Gambopat Engineering</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Practical tips on choosing, measuring and maintaining metal gates, doors, windows and railings, from Gambopat Engineering in Ashaiman, Ghana.">
+        <link rel="canonical" href="https://gambopat.com/tips.html">
+        <meta property="og:title" content="Metalwork Tips & Guides | Gambopat Engineering">
+        <meta property="og:description" content="Practical tips on choosing, measuring and maintaining metal gates, doors, windows and railings, from Gambopat Engineering in Ashaiman, Ghana.">
+        <meta property="og:url" content="https://www.gambopat.com/tips.html">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://www.gambopat.com/web-app-manifest-512x512.png">
+        <link rel="icon" href="favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <div class="hed-f">
+                <img src="favicon-96x96.png" alt="Gambopat Logo">
+                <span class="gg">GAMBOPAT</span>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <nav id="nav-links" class="nav">
+                <a href="index.html">Home</a>
+                <a href="main-gates.html">Gates</a>
+                <a href="window.html">Windows</a>
+                <a href="security-door.html">Doors</a>
+                <a href="staircase.html">Staircase</a>
+                <a href="balustrades.html">Balustrades</a>
+                <a href="chairs-tables.html">Furniture</a>
+                <a href="training.html">Training</a>
+                <a href="about.html" >About</a>
+                <a href="quote.html">Get a Quote</a>
+                <a href="https://wa.me/233243265708" target="_blank" class="cta">Chat Now</a>
+            </nav>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <div class="settings-menu" id="settingsMenu">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="lightMode" onchange="toggleLightMode()"> Light Mode
+                </label>
+                <button class="close-settings" onclick="toggleSettings()" style="margin-top: 10px; width: 100%; padding: 8px; background: var(--gold); border: none; color: #111; font-weight: bold; border-radius: 5px;">Apply</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h2>Tips &amp; Guides</h2>
+            <p>Practical advice from our workshop.</p>
+        </section>
+
+        <section class="page-wrap">
+            <article><h3>Swing gate or sliding gate?</h3>
+            <p>Swing gates are simpler and usually cheaper, but need clear space for the leaves to open. Sliding gates suit tight driveways because they travel along the wall, but need a straight run beside the opening and a track or rail. Tell us your space and we will recommend the better fit.</p></article>
+            <article><h3>Galvanised steel vs mild steel</h3>
+            <p>Galvanised steel has a zinc coating that resists rust, which helps in humid and rainy conditions. Mild steel is strong and easy to shape, and lasts well when it is properly primed and painted. Either way, protecting welds and cut edges is what keeps metalwork looking good.</p></article>
+            <article><h3>How to measure for a quote</h3>
+            <p>Measure the width and height of the opening at the narrowest points, note any slope in the ground, and take a clear photo of the area. Send these to us on WhatsApp and we can quote much faster.</p></article>
+            <article><h3>Keeping metalwork looking new</h3>
+            <p>Wash dust and salt off with water and mild soap, touch up chipped paint quickly before rust spreads, and oil hinges and rollers regularly. Check welds and fixings once a year.</p></article>
+            <article><h3>Need something special?</h3>
+            <p>Browse our <a href="custom-fabrication.html" style="color:var(--gold)">custom work and repairs</a>, see our <a href="projects.html" style="color:var(--gold)">latest projects</a> or <a href="quote.html" style="color:var(--gold)">request a quote</a>.</p></article>
+        </section>
+
+        <footer>
+            <p>© 2026 Gambopat Engineering &amp; Training Center | <a href="index.html" style="color:var(--gold);text-decoration:none">Home</a></p>
+        </footer>
+
+        <script>
+            function toggleMenu() { document.getElementById("nav-links").classList.toggle("show"); }
+            function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('active'); }
+            function toggleLightMode() {
+                document.body.classList.toggle('light-theme');
+                localStorage.setItem('lightTheme', document.body.classList.contains('light-theme'));
+            }
+            window.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem('lightTheme') === 'true') {
+                    document.body.classList.add('light-theme');
+                    const c = document.getElementById('lightMode'); if (c) c.checked = true;
+                }
+            });
+            function sendWA(lines) {
+                window.open("https://wa.me/233243265708?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+            }
+            
+        </script>
+        <script src="site-extras.js" defer></script>
+    </body>
+</html>
